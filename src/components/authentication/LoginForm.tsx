@@ -18,6 +18,8 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { redirect } from "next/navigation";
 import { login } from "@/app/actions/auth-actions";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation"; // Import useRouter
 
 
 const formSchema = z.object({
@@ -33,6 +35,7 @@ function LoginForm({ className }: { className?: string }) {
 
   const [loading, setLoading] = useState(false)
   const toastId = useId();
+  const router = useRouter(); // Initialize useRouter
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     toast.loading("Siging Up...", { id: toastId });
@@ -49,9 +52,10 @@ function LoginForm({ className }: { className?: string }) {
       toast.error(String(error), { id: toastId });
       setLoading(false);
     } else {
-      toast.success("Sign Up Success", { id: toastId });
+      toast.success("Sign Up Successful!", { id: toastId });
       setLoading(false);
-      redirect("/dashboard");
+      router.push("/dashboard"); 
+      console.log('Redirected')
     }
 
     setLoading(false);
@@ -109,6 +113,7 @@ function LoginForm({ className }: { className?: string }) {
             )}
           />
           <Button type="submit" className="w-full">
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Login
           </Button>
         </form>

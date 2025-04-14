@@ -46,14 +46,14 @@ export async function login(formData: FormData): Promise<Authresponse>{
         email: formData.get('email') as string,
         password: formData.get('password') as string,
     }
-
         const {data : signindata, error } = await supabase.auth.signInWithPassword(data)
+
+     
 
         return{
             error: error?.message || "Error Loggin In",
             success: !error,
             data: signindata || null
         }
-
 
 }

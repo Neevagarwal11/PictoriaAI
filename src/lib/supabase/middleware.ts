@@ -12,6 +12,8 @@ export async function updateSession(request: NextRequest) {
     {
       cookies: {
         getAll() {
+          const cookies = request.cookies.getAll()
+          console.log('Cookies :' , cookies)
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
