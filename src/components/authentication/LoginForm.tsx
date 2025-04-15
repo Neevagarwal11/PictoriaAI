@@ -54,8 +54,7 @@ function LoginForm({ className }: { className?: string }) {
     } else {
       toast.success("Sign Up Successful!", { id: toastId });
       setLoading(false);
-      router.push("/dashboard"); 
-      console.log('Redirected')
+      redirect("/dashboard"); 
     }
 
     setLoading(false);

@@ -11,7 +11,10 @@ export async function GET(request: NextRequest) {
   const next = searchParams.get('next') ?? '/'
 
   if (token_hash && type) {
-    const supabase = await createClient()
+    const supabase = await createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_ANON_KEY!
+    )
 
     const { error } = await supabase.auth.verifyOtp({
       type,
@@ -22,7 +25,7 @@ export async function GET(request: NextRequest) {
       redirect('/dashboard')
     }
   }
-  console.log('Cookie problem')
+
   // redirect the user to an error page with some instructions
   redirect('/dashboard')
 }

@@ -1,6 +1,7 @@
 'use server'
 
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from '@/lib/supabase/server'
+
 
 interface Authresponse {
     error: null | string,
@@ -24,7 +25,7 @@ export async function signup(formData: FormData): Promise<Authresponse>{
         }
     }
 
-        const {data : signupdata, error } = await supabase.auth.signUp(data)
+        const {data : signupdata, error } = await (await supabase).auth.signUp(data)
 
         return{
             error: error?.message || "Error Sigining Up",
@@ -46,8 +47,7 @@ export async function login(formData: FormData): Promise<Authresponse>{
         email: formData.get('email') as string,
         password: formData.get('password') as string,
     }
-        const {data : signindata, error } = await supabase.auth.signInWithPassword(data)
-
+        const {data : signindata, error } = await (await supabase).auth.signInWithPassword(data)
      
 
         return{
