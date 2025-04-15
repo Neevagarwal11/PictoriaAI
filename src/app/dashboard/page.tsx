@@ -1,9 +1,13 @@
 "use client"
+import LogoutBtn from '@/components/authentication/logoutBtn'
+import { Sidebar } from 'lucide-react'
 import React from 'react'
 
 function Dashboardpage() {
   return (
-    <div>Daskdnas</div>
+    <div>Daskdnas
+      <LogoutBtn />
+    </div>
   )
 }
 

@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation';
 
 
 interface Authresponse {
@@ -56,4 +57,14 @@ export async function login(formData: FormData): Promise<Authresponse>{
             data: signindata || null
         }
 
+}
+
+export async function logout(): Promise<void>{
+    const supabase = await createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_ANON_KEY!
+    );
+
+    await supabase.auth.signOut();
+    redirect('/login');
 }
