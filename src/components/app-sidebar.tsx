@@ -32,19 +32,6 @@ export async function AppSidebar( {
 }: React.ComponentProps<typeof Sidebar> & {user:{name:string ; email:string}}) {
 
 
-//   const supabase = await createClient(
-//     process.env.SUPABASE_URL!,
-//     process.env.SUPABASE_ANON_KEY!
-//   )
-//   const {data} = await supabase.auth.getUser()
-
-
-//   const user = {
-//     name:data.user?.user_metadata?.full_name,
-//     email:data.user?.email ?? " ",
-//   }
-// console.log("user", user)
-
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
