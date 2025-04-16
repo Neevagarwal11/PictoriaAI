@@ -1,9 +1,6 @@
 import * as React from "react"
 
 import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -16,25 +13,37 @@ import {
 import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
 import { Image, Sparkles } from "lucide-react"
 import { createClient } from '@/lib/supabase/server'
+import { NavUser } from "./nav-user"
 
 // This is sample data.
 
 
-export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface AppSidebarProps {
+  user: {
+    name: string;
+    email: string;
+  };
+}
 
 
-  const supabase = await createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!
-  )
-  const {data} = await supabase.auth.getUser()
+export async function AppSidebar( {
+  user,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & {user:{name:string ; email:string}}) {
 
 
-  const user = {
-    name:data.user?.user_metadata.full_name,
-    email:data.user?.email ?? "",
-  }
+//   const supabase = await createClient(
+//     process.env.SUPABASE_URL!,
+//     process.env.SUPABASE_ANON_KEY!
+//   )
+//   const {data} = await supabase.auth.getUser()
 
+
+//   const user = {
+//     name:data.user?.user_metadata?.full_name,
+//     email:data.user?.email ?? " ",
+//   }
+// console.log("user", user)
 
   return (
     <Sidebar collapsible="icon" {...props}>
