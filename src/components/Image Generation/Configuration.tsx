@@ -3,6 +3,7 @@ import React from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { Slider } from "@/components/ui/slider";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +23,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "../ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 
 /*
   prompt: "black forest gateau cake spelling out the words \"FLUX DEV\", tasty, food photography, dynamic shot",
@@ -87,92 +96,300 @@ function Configuration() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="model"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Model</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a Model" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="black-forest-labs/flux-dev">
-                    Flux Dev
-                  </SelectItem>
-                  <SelectItem value="black-forest-labs/flux-schnell">
-                    Flux Schnell
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <TooltipProvider>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8  w-2/5 px-10"
+        >
+          <fieldset className=" grid gap-6 border-2 border-gray-200 p-4 rounded-lg">
+            <legend className="text-sm -ml-1 px-1 font-medium">Settings</legend>
 
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="aspect_ratio"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Aspect Ratio</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+            <FormField
+              control={form.control}
+              name="model"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Model
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="w-4 h-3"></Info>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>You can select from the dropdown menu</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a Model" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="black-forest-labs/flux-dev">
+                        Flux Dev
+                      </SelectItem>
+                      <SelectItem value="black-forest-labs/flux-schnell">
+                        Flux Schnell
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="aspect_ratio"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Aspect Ratio
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="w-4 h-3"></Info>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Aspect Ratio for the Image to be Generated</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a Model" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="1:1">1:1</SelectItem>
+                        <SelectItem value="16:9">16:9</SelectItem>
+                        <SelectItem value="9:16">9:16</SelectItem>
+                        <SelectItem value="21:9">21:9</SelectItem>
+                        <SelectItem value="9:21">9:21</SelectItem>
+                        <SelectItem value="4:5">4:5</SelectItem>
+                        <SelectItem value="5:4">5:4</SelectItem>
+                        <SelectItem value="4:3">4:3</SelectItem>
+                        <SelectItem value="3:4">3:4</SelectItem>
+                        <SelectItem value="2:3">2:3</SelectItem>
+                        <SelectItem value="3:2">3:2</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="num_outputs"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Number of Outputs
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="w-4 h-3"></Info>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Number of Output Images to Generate</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        min={1}
+                        max={4}
+                        type="number"
+                        {...field}
+                        onChange={(event) =>
+                          field.onChange(+event.target.value)
+                        }
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="guidance"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center justify-between">
+                    <div className="flex items-center  gap-2">Guidance
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="w-4 h-3"></Info>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Prompt Guidance for Generated Image</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    </div>
+                    <span>{field.value}</span>
+                  </FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a Model" />
-                    </SelectTrigger>
+                    <Slider
+                      defaultValue={[field.value]}
+                      max={10}
+                      min={0}
+                      step={0.5}
+                      onValueChange={(value) => field.onChange(value[0])}
+                    />
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="1:1">1:1</SelectItem>
-                    <SelectItem value="16:9">16:9</SelectItem>
-                    <SelectItem value="9:16">9:16</SelectItem>
-                    <SelectItem value="21:9">21:9</SelectItem>
-                    <SelectItem value="9:21">9:21</SelectItem>
-                    <SelectItem value="4:5">4:5</SelectItem>
-                    <SelectItem value="5:4">5:4</SelectItem>
-                    <SelectItem value="4:3">4:3</SelectItem>
-                    <SelectItem value="3:4">3:4</SelectItem>
-                    <SelectItem value="2:3">2:3</SelectItem>
-                    <SelectItem value="3:2">3:2</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="num_inference_steps"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">Number Of Inference Steps
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="w-4 h-3"></Info>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Number of Denoising Steps. Recommended range is 28-50 for dev model and 1-4 for Schnell model</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    </div>
+                    <span>{field.value}</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Slider
+                      defaultValue={[field.value]}
+                      max={50}
+                      min={1}
+                      step={1}
+                      onValueChange={(value) => field.onChange(value[0])}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="output_quality"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">Output Quality
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="w-4 h-3"></Info>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Quality when saving the ouput image from 0 to 100. 0 been the lowest and 100 been the best quality.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    </div>
+                    <span>{field.value}</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Slider
+                      defaultValue={[field.value]}
+                      max={100}
+                      min={50}
+                      step={2}
+                      onValueChange={(value) => field.onChange(value[0])}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="num_outputs"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Number of Outputs</FormLabel>
-                <FormControl>
-                  <Input min={1} max={4} type="number" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        </div>
+            <FormField
+              control={form.control}
+              name="model"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Output Format
+                  <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="w-4 h-3"></Info>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Format of the Output images.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select the Output Format" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="black-forest-labs/flux-dev">
+                        Webp
+                      </SelectItem>
+                      <SelectItem value="black-forest-labs/flux-schnell">
+                        PNG
+                      </SelectItem>
+                      <SelectItem value="black-forest-labs/flux-schnell">
+                        JPG
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
+            <FormField
+              control={form.control}
+              name="prompt"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Propmt
+                  <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="w-4 h-3"></Info>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Prompt for the images.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter your prompt"
+                        {...field}
+                        rows={6}
+                      />
+                    </FormControl>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-
-
-
-
-
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+            <Button type="submit" className="font-medium">
+              Generate
+            </Button>
+          </fieldset>
+        </form>
+      </Form>
+    </TooltipProvider>
   );
 }
 

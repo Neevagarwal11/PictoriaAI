@@ -27,7 +27,8 @@ export default async function DashboardLayout({
     <SidebarProvider>
       <AppSidebar user={user} />
       <SidebarInset>
-      <SidebarTrigger className="-ml-1" />
+        <div className="w-fit flex items-center gap-2 my-2 px-4"></div>
+      <SidebarTrigger className="px-6 " /> 
 
     <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
         {children}
