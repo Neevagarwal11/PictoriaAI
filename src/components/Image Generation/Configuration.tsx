@@ -45,7 +45,7 @@ import { Info } from "lucide-react";
   num_inference_steps: 28
 */
 
-const formSchema = z.object({
+export const  ImageGenerationFormSchema = z.object({
   model: z.string({
     required_error: "Model is required",
   }),
@@ -76,8 +76,9 @@ const formSchema = z.object({
 });
 
 function Configuration() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+
+  const form = useForm<z.infer<typeof ImageGenerationFormSchema>>({
+    resolver: zodResolver(ImageGenerationFormSchema),
     defaultValues: {
       model: "black-forest-labs/flux-dev",
       prompt: "",
@@ -89,7 +90,7 @@ function Configuration() {
       num_inference_steps: 28,
     },
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof ImageGenerationFormSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
