@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -31,6 +31,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
+import { generateImageAction } from "@/app/actions/image-action";
 
 /*
   prompt: "black forest gateau cake spelling out the words \"FLUX DEV\", tasty, food photography, dynamic shot",
@@ -90,10 +91,34 @@ function Configuration() {
       num_inference_steps: 28,
     },
   });
-  function onSubmit(values: z.infer<typeof ImageGenerationFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+
+
+  useEffect(()=>{
+    const subscription = form.watch((value,{name})=>{
+      if(name === "model"){
+        let newSteps;
+
+        if(value.model === "black-forest-labs/flux-schnell"){
+          newSteps = 4;
+      }else{
+        newSteps = 28;
+      }
+
+      if(newSteps !== undefined){
+        form.setValue("num_inference_steps", newSteps);
+      }
+    }
+
+    })
+
+    return ()=>subscription.unsubscribe();
+  }, [form])
+
+
+
+  async function onSubmit(values: z.infer<typeof ImageGenerationFormSchema>) {
+  const {error , success, data } =   await generateImageAction(values);
+    console.log(error, success, data);
   }
 
   return (
