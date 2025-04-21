@@ -296,8 +296,9 @@ function Configuration() {
                   <FormControl>
                     <Slider
                       defaultValue={[field.value]}
-                      max={50}
+                      max={form.getValues('model')=== "black-forest-labs/flux-schnell" ? 4: 50 }
                       min={1}
+                      
                       step={1}
                       onValueChange={(value) => field.onChange(value[0])}
                     />
