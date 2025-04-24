@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
 import { generateImageAction } from "@/app/actions/image-action";
+import useGeneratedStore from "@/store/useGeneratedStore";
 
 /*
   prompt: "black forest gateau cake spelling out the words \"FLUX DEV\", tasty, food photography, dynamic shot",
@@ -78,6 +79,8 @@ export const  ImageGenerationFormSchema = z.object({
 
 function Configuration() {
 
+  const generateImage = useGeneratedStore((state) => state.generateImage)
+
   const form = useForm<z.infer<typeof ImageGenerationFormSchema>>({
     resolver: zodResolver(ImageGenerationFormSchema),
     defaultValues: {
@@ -117,8 +120,7 @@ function Configuration() {
 
 
   async function onSubmit(values: z.infer<typeof ImageGenerationFormSchema>) {
-  const {error , success, data } =   await generateImageAction(values);
-    console.log(error, success, data);
+  generateImageAction(values);
   }
 
   return (
