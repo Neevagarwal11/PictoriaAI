@@ -35,13 +35,14 @@ const images = [
 ];
 
 function generatedImages() {
+
   const images = useGeneratedStore((state) => state.images);
   const loading = useGeneratedStore((state) => state.loading);
 
   if (images.length === 0) {
     return (
       <Card className="w-full max-w-2xl bg-muted">
-        <CardContent className="flex aspect-square items-center jsutify-center p-6">
+        <CardContent className="flex aspect-square items-center justify-center p-6">
           <span className="text-2xl">No Images Generated</span>
         </CardContent>
       </Card>

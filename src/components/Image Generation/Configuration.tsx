@@ -79,6 +79,7 @@ export const  ImageGenerationFormSchema = z.object({
 
 function Configuration() {
 
+
   const generateImage = useGeneratedStore((state) => state.generateImage)
 
   const form = useForm<z.infer<typeof ImageGenerationFormSchema>>({
@@ -120,7 +121,10 @@ function Configuration() {
 
 
   async function onSubmit(values: z.infer<typeof ImageGenerationFormSchema>) {
-  generateImageAction(values);
+
+   await generateImageAction(values);
+
+
   }
 
   return (
