@@ -345,7 +345,7 @@ function Configuration() {
 
             <FormField
               control={form.control}
-              name="model"
+              name="output_format"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Output Format

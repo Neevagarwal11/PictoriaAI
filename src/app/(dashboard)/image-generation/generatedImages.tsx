@@ -53,7 +53,7 @@ function generatedImages() {
     <Carousel className="w-full max-w-2xl">
       <CarouselContent>
         {images.map((image, index) => (
-          <CarouselItem key={index}>
+          <CarouselItem key={image.url + '-' + index}>
             <div className="relative overflow-hidden rounded-lg flex items-center justify-center aspect-square">
               <Image
                 src={image.url}
