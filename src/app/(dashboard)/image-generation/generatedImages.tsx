@@ -11,6 +11,8 @@ import {
 import Image from "next/image";
 import useGeneratedStore from "@/store/useGeneratedStore";
 
+
+// API Payment yet to be implemented
 const images = [
   {
     src: "/hero-images/Charismatic Young Man with a Warm Smile and Stylish Tousled Hair.jpeg",
