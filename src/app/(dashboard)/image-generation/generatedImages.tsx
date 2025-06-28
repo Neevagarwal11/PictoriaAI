@@ -12,34 +12,36 @@ import Image from "next/image";
 import useGeneratedStore from "@/store/useGeneratedStore";
 
 
-// API Payment yet to be implemented
-const images = [
-  {
-    src: "/hero-images/Charismatic Young Man with a Warm Smile and Stylish Tousled Hair.jpeg",
-    alt: "alt image",
-  },
-  {
-    src: "/hero-images/Confident Businesswoman on Turquoise Backdrop.jpeg",
-    alt: "alt image",
-  },
-  {
-    src: "/hero-images/Confident Woman in Red Outfit.jpeg",
-    alt: "alt image",
-  },
-  {
-    src: "/hero-images/Professional Business Portrait.jpeg",
-    alt: "alt image",
-  },
-  {
-    src: "/hero-images/Sophisticated Businessman Portrait.jpeg",
-    alt: "alt image",
-  },
-];
+// // API Payment yet to be implemented
+// const images = [
+//   {
+//     src: "/hero-images/Charismatic Young Man with a Warm Smile and Stylish Tousled Hair.jpeg",
+//     alt: "alt image",
+//   },
+//   {
+//     src: "/hero-images/Confident Businesswoman on Turquoise Backdrop.jpeg",
+//     alt: "alt image",
+//   },
+//   {
+//     src: "/hero-images/Confident Woman in Red Outfit.jpeg",
+//     alt: "alt image",
+//   },
+//   {
+//     src: "/hero-images/Professional Business Portrait.jpeg",
+//     alt: "alt image",
+//   },
+//   {
+//     src: "/hero-images/Sophisticated Businessman Portrait.jpeg",
+//     alt: "alt image",
+//   },
+// ];
 
 function generatedImages() {
 
   const images = useGeneratedStore((state) => state.images);
   const loading = useGeneratedStore((state) => state.loading);
+
+  console.log("Generated Images:", images);
 
   if (images.length === 0) {
     return (

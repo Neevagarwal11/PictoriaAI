@@ -58,7 +58,7 @@ function LoginForm({ className }: { className?: string }) {
     }
 
     setLoading(false);
-    console.log(values);
+    // console.log(values);
   }
 
   const form = useForm<z.infer<typeof formSchema>>({

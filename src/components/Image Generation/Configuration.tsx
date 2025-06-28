@@ -47,7 +47,7 @@ import useGeneratedStore from "@/store/useGeneratedStore";
   num_inference_steps: 28
 */
 
-export const  ImageGenerationFormSchema = z.object({
+export const ImageGenerationFormSchema = z.object({
   model: z.string({
     required_error: "Model is required",
   }),
@@ -78,9 +78,7 @@ export const  ImageGenerationFormSchema = z.object({
 });
 
 function Configuration() {
-
-
-  const generateImage = useGeneratedStore((state) => state.generateImage)
+  const generateImage = useGeneratedStore((state) => state.generateImage);
 
   const form = useForm<z.infer<typeof ImageGenerationFormSchema>>({
     resolver: zodResolver(ImageGenerationFormSchema),
@@ -96,35 +94,28 @@ function Configuration() {
     },
   });
 
-
-  useEffect(()=>{
-    const subscription = form.watch((value,{name})=>{
-      if(name === "model"){
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "model") {
         let newSteps;
 
-        if(value.model === "black-forest-labs/flux-schnell"){
+        if (value.model === "black-forest-labs/flux-schnell") {
           newSteps = 4;
-      }else{
-        newSteps = 28;
+        } else {
+          newSteps = 28;
+        }
+
+        if (newSteps !== undefined) {
+          form.setValue("num_inference_steps", newSteps);
+        }
       }
+    });
 
-      if(newSteps !== undefined){
-        form.setValue("num_inference_steps", newSteps);
-      }
-    }
-
-    })
-
-    return ()=>subscription.unsubscribe();
-  }, [form])
-
-
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   async function onSubmit(values: z.infer<typeof ImageGenerationFormSchema>) {
-
-   await generateImageAction(values);
-
-
+    await generateImageAction(values);
   }
 
   return (
@@ -136,12 +127,12 @@ function Configuration() {
         >
           <fieldset className=" grid gap-6 border-2 border-gray-200 p-4 rounded-lg">
             <legend className="text-sm -ml-1 px-1 font-medium">Settings</legend>
-
+            {/* // Model Selection */}
             <FormField
               control={form.control}
               name="model"
               render={({ field }) => (
-                <FormItem>
+            <FormItem>
                   <FormLabel>
                     Model
                     <Tooltip>
@@ -176,21 +167,24 @@ function Configuration() {
               )}
             />
 
+
+            {/* // Aspect Ratio */}
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="aspect_ratio"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Aspect Ratio
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info className="w-4 h-3"></Info>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Aspect Ratio for the Image to be Generated</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <FormLabel>
+                      Aspect Ratio
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info className="w-4 h-3"></Info>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Aspect Ratio for the Image to be Generated</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
@@ -219,21 +213,22 @@ function Configuration() {
                   </FormItem>
                 )}
               />
-
+              {/* // Number of Outputs */}
               <FormField
                 control={form.control}
                 name="num_outputs"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Number of Outputs
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info className="w-4 h-3"></Info>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Number of Output Images to Generate</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <FormLabel>
+                      Number of Outputs
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info className="w-4 h-3"></Info>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Number of Output Images to Generate</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -251,21 +246,24 @@ function Configuration() {
               />
             </div>
 
+
+            {/* // Guidance */}
             <FormField
               control={form.control}
               name="guidance"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center justify-between">
-                    <div className="flex items-center  gap-2">Guidance
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info className="w-4 h-3"></Info>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Prompt Guidance for Generated Image</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <div className="flex items-center  gap-2">
+                      Guidance
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info className="w-4 h-3"></Info>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Prompt Guidance for Generated Image</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                     <span>{field.value}</span>
                   </FormLabel>
@@ -281,30 +279,40 @@ function Configuration() {
                 </FormItem>
               )}
             />
+
+            {/* // Number of Inference Steps */}
             <FormField
               control={form.control}
               name="num_inference_steps"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">Number Of Inference Steps
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info className="w-4 h-3"></Info>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Number of Denoising Steps. Recommended range is 28-50 for dev model and 1-4 for Schnell model</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <div className="flex items-center gap-2">
+                      Number Of Inference Steps
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info className="w-4 h-3"></Info>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>
+                            Number of Denoising Steps. Recommended range is
+                            28-50 for dev model and 1-4 for Schnell model
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                     <span>{field.value}</span>
                   </FormLabel>
                   <FormControl>
                     <Slider
                       defaultValue={[field.value]}
-                      max={form.getValues('model')=== "black-forest-labs/flux-schnell" ? 4: 50 }
+                      max={
+                        form.getValues("model") ===
+                        "black-forest-labs/flux-schnell"
+                          ? 4
+                          : 50
+                      }
                       min={1}
-                      
                       step={1}
                       onValueChange={(value) => field.onChange(value[0])}
                     />
@@ -312,21 +320,27 @@ function Configuration() {
                 </FormItem>
               )}
             />
+
+            {/* // Output Quality */}
             <FormField
               control={form.control}
               name="output_quality"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">Output Quality
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info className="w-4 h-3"></Info>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Quality when saving the ouput image from 0 to 100. 0 been the lowest and 100 been the best quality.</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <div className="flex items-center gap-2">
+                      Output Quality
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info className="w-4 h-3"></Info>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>
+                            Quality when saving the ouput image from 0 to 100. 0
+                            been the lowest and 100 been the best quality.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                     <span>{field.value}</span>
                   </FormLabel>
@@ -343,13 +357,15 @@ function Configuration() {
               )}
             />
 
+            {/* // Output Format */}
             <FormField
               control={form.control}
               name="output_format"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Output Format
-                  <Tooltip>
+                  <FormLabel>
+                    Output Format
+                    <Tooltip>
                       <TooltipTrigger>
                         <Info className="w-4 h-3"></Info>
                       </TooltipTrigger>
@@ -368,15 +384,9 @@ function Configuration() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="black-forest-labs/flux-dev">
-                        Webp
-                      </SelectItem>
-                      <SelectItem value="black-forest-labs/flux-schnell">
-                        PNG
-                      </SelectItem>
-                      <SelectItem value="black-forest-labs/flux-schnell">
-                        JPG
-                      </SelectItem>
+                      <SelectItem value="webp">Webp</SelectItem>
+                      <SelectItem value="png">PNG</SelectItem>
+                      <SelectItem value="jpg">JPG</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -384,13 +394,15 @@ function Configuration() {
               )}
             />
 
+            {/* // Prompt */}
             <FormField
               control={form.control}
               name="prompt"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Propmt
-                  <Tooltip>
+                  <FormLabel>
+                    Propmt
+                    <Tooltip>
                       <TooltipTrigger>
                         <Info className="w-4 h-3"></Info>
                       </TooltipTrigger>
@@ -415,8 +427,6 @@ function Configuration() {
                 </FormItem>
               )}
             />
-            
-
             <Button type="submit" className="font-medium">
               Generate
             </Button>

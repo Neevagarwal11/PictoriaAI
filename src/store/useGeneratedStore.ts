@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ImageGenerationFormSchema } from "@/components/Image Generation/Configuration";
 import { z } from "zod";
-import { generateImageAction } from '@/app/actions/image-action';
+import { generateImageAction, storeImages } from '@/app/actions/image-action';
 
 
 interface GeneratedState {
@@ -32,11 +32,15 @@ const useGeneratedStore = create<GeneratedState>((set) => ({
 
             const datawithUrl = data.map((url:string) => {
                 return{
-                    url
+                    url,
+                    ...values
                 }
             })
 
             set({images:data , loading:false})
+
+            await storeImages(datawithUrl)
+
         }catch(error){
             console.error(error)
             set({error:"Failed to generate image" , loading:false})

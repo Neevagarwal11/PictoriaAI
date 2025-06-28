@@ -4,6 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ImageGenerationFormSchema } from "@/components/Image Generation/Configuration";
 import Replicate from "replicate";
 import { createClient } from "@/lib/supabase/server";
+import { Database } from "@datatypes.types";
+import { imageMeta } from "image-meta";
+import { randomUUID } from "crypto";
+import { error } from "console";
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
@@ -51,24 +55,113 @@ export async function generateImageAction(
   }
 }
 
+type storeImageInput = {
+  url: string;
+} & Database["public"]["Tables"]["generated_images"]["Insert"];
 
-
-export async function storeImages(){
-  const supabase = await createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!
-);
-
-const{data:{user}} = await supabase.auth.getUser()
-if(!user){
-  return{
-    error:'Unauthorized',
-    success:false,
-    data:null
-  }
+export async function imgUrlToBlob(url: string) {
+  const response = fetch(url);
+  const blob = (await response).blob();
+  return (await blob).arrayBuffer();
 }
 
 
+
+export async function storeImages(data: storeImageInput) {
+  const supabase = await createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!
+  );
+
+  const {data: { user }} = await supabase.auth.getUser();
+
+
+  if (!user) {
+    return {
+      error: "Unauthorized",
+      success: false,
+      data: null,
+    };
+  }
+
+  const uploadResult = [];
+
+  const img = data;
+  const arrayBuffer = await imgUrlToBlob(img.url);
+  const { width, height, type } = imageMeta(new Uint8Array(arrayBuffer));
+
+  const fileName = `image_${randomUUID()}.${type}`; //Used to name the image file that is to be saved in the storage bucket
+  const filePath = `${user.id}/${fileName}`; //Path to save the image file
+
+  const { error: storageError } = await supabase.storage
+    .from("generated_images")
+    .upload(filePath, arrayBuffer, {
+      contentType: `image/${type}`,
+      cacheControl: "3600",
+      upsert: true, //Not to upload duplicate file with same file name
+    });
+
+  if (storageError) {
+    uploadResult.push({
+      fileName,
+      error: storageError.message,
+      success: false,
+      data: null,
+    });
+    return {
+      error: storageError.message,
+      success: false,
+      data: { results: uploadResult }
+    };
+  }
+
+  const { data: dbData, error: dbError } = await supabase
+    .from("generated_images")
+    .insert([
+      {
+        user_id: user.id,
+        model: img.model,
+        prompt: img.prompt,
+        aspect_ratio: img.aspect_ratio,
+        guidance: img.guidance,
+        num_inference_steps: img.num_inference_steps,
+        output_format: img.output_format,
+        image_name: fileName,
+        width: width,
+        height: height,
+      },
+    ])
+    .select();
+
+  if (dbError) {
+    uploadResult.push({
+      fileName,
+      error: dbError.message,
+      success: false,
+      data: dbData || null,
+    });
+    return {
+      error: dbError.message,
+      success: false,
+      data: { results: uploadResult }
+    };
+  }
+
+  uploadResult.push({
+    fileName,
+    error: null,
+    success: true,
+    data: dbData,
+  });
+
+  console.log('Upload Result:', uploadResult);
+  
+
+  return {
+    error: null,
+    success: true,
+    data: { results: uploadResult }
+  };
 
 
 
