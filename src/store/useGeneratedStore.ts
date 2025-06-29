@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ImageGenerationFormSchema } from "@/components/Image Generation/Configuration";
 import { z } from "zod";
 import { generateImageAction, storeImages } from '@/app/actions/image-action';
+import { toast } from 'sonner';
 
 
 interface GeneratedState {
@@ -22,6 +23,8 @@ const useGeneratedStore = create<GeneratedState>((set) => ({
     generateImage: async (values:z.infer<typeof ImageGenerationFormSchema>)=> {
         set({ loading: true, error: null });
 
+        const toastId = toast.loading("Generating Image...")
+
         try{
             const {error , success , data} =await generateImageAction(values)
             if(!success){
@@ -39,7 +42,10 @@ const useGeneratedStore = create<GeneratedState>((set) => ({
 
             set({images:data , loading:false})
 
+            toast.success("Image Generated Successfully" , {id:toastId})
+            
             await storeImages(datawithUrl)
+            toast.success("Image Stored Successfully" , {id:toastId})
 
         }catch(error){
             console.error(error)
