@@ -65,16 +65,15 @@ export async function imgUrlToBlob(url: string) {
   return (await blob).arrayBuffer();
 }
 
-
-
 export async function storeImages(data: storeImageInput) {
   const supabase = await createClient(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_ANON_KEY!
   );
 
-  const {data: { user }} = await supabase.auth.getUser();
-
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return {
@@ -111,7 +110,7 @@ export async function storeImages(data: storeImageInput) {
     return {
       error: storageError.message,
       success: false,
-      data: { results: uploadResult }
+      data: { results: uploadResult },
     };
   }
 
@@ -143,7 +142,7 @@ export async function storeImages(data: storeImageInput) {
     return {
       error: dbError.message,
       success: false,
-      data: { results: uploadResult }
+      data: { results: uploadResult },
     };
   }
 
@@ -154,15 +153,73 @@ export async function storeImages(data: storeImageInput) {
     data: dbData,
   });
 
-  console.log('Upload Result:', uploadResult);
-  
+  console.log("Upload Result:", uploadResult);
 
   return {
     error: null,
     success: true,
-    data: { results: uploadResult }
+    data: { results: uploadResult },
   };
+}
 
+export async function getImages(limit?: number) {
+  const supabase = await createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!
+  );
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
+  if (!user) {
+    return {
+      error: "Unauthorized",
+      success: false,
+      data: null,
+    };
+  }
+
+  let query = supabase
+    .from("generated_images")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (limit) {
+    query = query.limit(limit);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    return {
+      error: error.message || "Failed to fetch images",
+      success: false,
+      data: null,
+    };
+  }
+
+  const imagesWithUrls = await Promise.all(
+    data.map(
+      async (
+        image: Database["public"]["Tables"]["generated_images"]["Row"]
+      ) => {
+        const { data } = await supabase.storage
+          .from("generated_images")
+          .createSignedUrl(`${user.id}/${image.image_name}`, 3600); //Used when the image is clicked to view in detail n 
+
+        return {
+          ...image,
+          url: data?.signedUrl,
+        };
+      }
+    )
+  );
+
+  return {
+    error: null,
+    success: true,
+    data: { results: imagesWithUrls || null },
+  };
 }
