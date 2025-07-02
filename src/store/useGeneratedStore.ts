@@ -31,16 +31,15 @@ const useGeneratedStore = create<GeneratedState>((set) => ({
                 set({error:error , loading:false})
                 return
             }
-            console.log(data)
+            console.log(data , "useGeneratedStore.ts")
 
             const datawithUrl = data.map((url:string) => {
                 return{
                     url,
-                    ...values
                 }
             })
 
-            set({images:data , loading:false})
+            set({images:datawithUrl , loading:false})
 
             toast.success("Image Generated Successfully" , {id:toastId})
             

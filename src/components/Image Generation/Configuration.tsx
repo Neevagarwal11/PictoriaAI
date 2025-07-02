@@ -34,18 +34,7 @@ import { Info } from "lucide-react";
 import { generateImageAction } from "@/app/actions/image-action";
 import useGeneratedStore from "@/store/useGeneratedStore";
 
-/*
-  prompt: "black forest gateau cake spelling out the words \"FLUX DEV\", tasty, food photography, dynamic shot",
-  go_fast: true,
-  guidance: 3.5,
-  megapixels: "1",
-  num_outputs: 1,
-  aspect_ratio: "1:1",
-  output_format: "webp",
-  output_quality: 80,
-  prompt_strength: 0.8,
-  num_inference_steps: 28
-*/
+
 
 export const ImageGenerationFormSchema = z.object({
   model: z.string({
@@ -115,7 +104,8 @@ function Configuration() {
   }, [form]);
 
   async function onSubmit(values: z.infer<typeof ImageGenerationFormSchema>) {
-    await generateImageAction(values);
+    await generateImage(values);
+    // console.log(error , success, data ,  "onSubmit function in configurations.tsx");OKK
   }
 
   return (

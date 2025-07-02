@@ -11,7 +11,7 @@ import { error } from "console";
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
-  useFileOutput: false,
+  useFileOutput:false,
 });
 
 interface ImageResponse {
@@ -32,20 +32,23 @@ export async function generateImageAction(
     aspect_ratio: input.aspect_ratio,
     output_format: input.output_format,
     output_quality: input.output_quality,
-    prompt_strength: 2.8,
+    prompt_strength: 0.8,
     num_inference_steps: input.num_inference_steps,
   };
 
   try {
     const output = await replicate.run(input.model as `${string}/${string}`, {
-      input,
+      input:modelInput,
     });
+    console.log("Replicate output:", output); // Log the output for debugging OOOOKKKK
 
     return {
       error: null,
       success: true,
       data: output,
     };
+
+
   } catch (err: any) {
     return {
       error: err.message || "Failed to generate image",
@@ -54,6 +57,8 @@ export async function generateImageAction(
     };
   }
 }
+
+
 
 type storeImageInput = {
   url: string;
@@ -65,15 +70,16 @@ export async function imgUrlToBlob(url: string) {
   return (await blob).arrayBuffer();
 }
 
+
+
+
 export async function storeImages(data: storeImageInput) {
   const supabase = await createClient(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_ANON_KEY!
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const {data: { user }} = await supabase.auth.getUser();
 
   if (!user) {
     return {
@@ -222,4 +228,43 @@ export async function getImages(limit?: number) {
     success: true,
     data: { results: imagesWithUrls || null },
   };
+}
+
+
+export async function deleteImage(id : string , imageName:string) {
+  const supabase = await createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!
+  );
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      error: "Unauthorized",
+      success: false,
+      data: null,
+    };
+  }
+  const {data, error}  = await supabase.from("generated_images").delete().eq('id', id)
+  if(error){
+    return{
+      error: error.message || "Failed to delete image",
+      success: false,
+      data: null,
+    }
+  }
+
+  await supabase.storage.from('bucket').remove([`${user.id}/${imageName}`]);
+
+
+return{
+  error:null,
+  success: true,
+  data: data || null
+}
+
+
 }
