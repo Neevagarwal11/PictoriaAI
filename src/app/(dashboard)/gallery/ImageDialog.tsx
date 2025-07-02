@@ -16,7 +16,6 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import DeleteImage from '@/components/gallery/deleteImage'
 
 
-
 interface ImageDialogProps{
   image: {url:string | undefined} & Tables<"generated_images">,
   onClose: () => void
@@ -29,7 +28,7 @@ function ImageDialog({image , onClose} : ImageDialogProps) {
       const url= window.URL.createObjectURL(new Blob([blob]))
       const link = document.createElement('a')
       link.href = url
-      link.setAttribute('download' , 'generated_image-${Date.now()}.${image.output_format}')
+      link.setAttribute('download' , `generated_image-${Date.now()}.${image.output_format}`)
 
 
       document.body.appendChild(link)
@@ -47,15 +46,15 @@ function ImageDialog({image , onClose} : ImageDialogProps) {
 
   return (
 <Sheet open={true} onOpenChange={onClose}>
-  <SheetContent className='max-w-full sm:max-w-xl w-full'>
+  <SheetContent className='max-w-full sm:max-w-xl w-full '>
     <SheetHeader>
       <SheetTitle className='text-2xl w-full'>Image Details</SheetTitle>
-      <ScrollArea className="flex flex-col h-100vh">
-      
-      <div className='relative w-fit h-fit'>
-        <Image src= {image.url || ""} alt={image.prompt || ""} width={image.width || 0} height={image.height || 0} className="rounded w-full h-auto flex mb-3"></Image>
+      <ScrollArea className="flex flex-col h-[90vh] overflow-auto">
 
-        <div className='flex gap-4 aboslute bottom-4 right-4'>
+      <div className='relative w-fit h-fit'>
+        <Image src= {image.url || ""} alt={image.prompt || ""} width={image.width || 0} height={image.height || 0} className="rounded w-full h-auto flex mb-3"/>
+
+        <div className='flex gap-4 absolute bottom-4 right-4'>
           <Button onClick={handelDownload} className='w-fit '>
             <Download className='w-4 h-4 mr-2'/>Download
           </Button>
@@ -102,7 +101,8 @@ function ImageDialog({image , onClose} : ImageDialogProps) {
           {new Date(image.created_at).toLocaleDateString()}
         </Badge>
       </div>
-    <ScrollBar orientation='vertical'></ScrollBar>
+
+    <ScrollBar orientation='vertical'/>
     </ScrollArea>
     </SheetHeader>
   </SheetContent>

@@ -207,7 +207,7 @@ export async function getImages(limit?: number) {
         image: Database["public"]["Tables"]["generated_images"]["Row"]
       ) => {
         const { data } = await supabase.storage
-          .from("generated_images")
+          .from("generated-images")
           .createSignedUrl(`${user.id}/${image.image_name}`, 3600); //Used when the image is clicked to view in detail n 
 
         return {

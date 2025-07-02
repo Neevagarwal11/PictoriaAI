@@ -29,14 +29,14 @@ const GalleryComponent = ({images = []}: GalleryProps) => {
     }
 
   return (
-    <div className='container mx-auto py-8'>
+    <div className='container mx-auto py-8 overflow-auto'>
         <div className='columns-4' gap-4 space-y-4>
             {
                  images.map((image , index) => {
                 return    <div key={index}>
-                        <div onClick={()=> setSelectedImage(image)} className='relative overflow-hidden cursor-pointer transition-transform'>
+                        <div onClick={()=> setSelectedImage(image)} className='relative group overflow-hidden cursor-pointer transition-transform'>
 
-                            <div className='absolute insert-0 bg-black opacity-0.3 transition-opacity duration-300 group-hover:opacity-70 rounded'>
+                            <div className='absolute inset-0 bg-black opacity-0 transition-opacity duration-300 group-hover:opacity-70 rounded'>
                                 <div className='flex items-center justify-center h-full'>
                                     <p className='text-primary-foreground text-lg font-semibold'>View Details</p>
                                 </div>
