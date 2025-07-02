@@ -20,6 +20,7 @@ interface ImageResponse {
   data: any | null;
 }
 
+// Ok Tested
 export async function generateImageAction(
   input: z.infer<typeof ImageGenerationFormSchema>
 ): Promise<ImageResponse> {
@@ -72,8 +73,8 @@ export async function imgUrlToBlob(url: string) {
 
 
 
-
-export async function storeImages(data: storeImageInput) {
+    // Ok Tested - Bucket and Db tables getting the img dets.
+export async function storeImages(data: storeImageInput[]) {
   const supabase = await createClient(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_ANON_KEY!
@@ -91,38 +92,37 @@ export async function storeImages(data: storeImageInput) {
 
   const uploadResult = [];
 
-  const img = data;
-  const arrayBuffer = await imgUrlToBlob(img.url);
-  const { width, height, type } = imageMeta(new Uint8Array(arrayBuffer));
+  for(const img of data){
 
-  const fileName = `image_${randomUUID()}.${type}`; //Used to name the image file that is to be saved in the storage bucket
-  const filePath = `${user.id}/${fileName}`; //Path to save the image file
+    const arrayBuffer = await imgUrlToBlob(img.url);
+    const { width, height, type } = imageMeta(new Uint8Array(arrayBuffer));
+    
+    const fileName = `image_${randomUUID()}.${type}`; //Used to name the image file that is to be saved in the storage bucket
+    const filePath = `${user.id}/${fileName}`; //Path to save the image file
+    
 
-  const { error: storageError } = await supabase.storage
-    .from("generated_images")
+    //Storage in Bucket
+    const { error: storageError } = await supabase.storage  //Stored in the storage bucket
+    .from("generated-images")
     .upload(filePath, arrayBuffer, {
       contentType: `image/${type}`,
       cacheControl: "3600",
       upsert: true, //Not to upload duplicate file with same file name
     });
+    
+    if(storageError){
+      uploadResult.push({
+        fileName,
+        error: storageError.message,
+        success: false,
+        data: null,
+      });
+      continue
+    }
+    
 
-  if (storageError) {
-    uploadResult.push({
-      fileName,
-      error: storageError.message,
-      success: false,
-      data: null,
-    });
-    return {
-      error: storageError.message,
-      success: false,
-      data: { results: uploadResult },
-    };
-  }
-
-  const { data: dbData, error: dbError } = await supabase
-    .from("generated_images")
-    .insert([
+  //Storage in DB Table
+  const { data: dbData, error: dbError } = await supabase.from("generated_images").insert([
       {
         user_id: user.id,
         model: img.model,
@@ -135,32 +135,27 @@ export async function storeImages(data: storeImageInput) {
         width: width,
         height: height,
       },
-    ])
-    .select();
-
-  if (dbError) {
+    ]).select();  
+    
+    if(dbError){
+      uploadResult.push({
+        fileName,
+        error: dbError.message,
+        success: !dbError,
+        data: dbData || null,
+      });
+    }
+    
     uploadResult.push({
-      fileName,
-      error: dbError.message,
-      success: false,
-      data: dbData || null,
-    });
-    return {
-      error: dbError.message,
-      success: false,
-      data: { results: uploadResult },
-    };
-  }
-
-  uploadResult.push({
     fileName,
     error: null,
     success: true,
     data: dbData,
   });
+  }
 
-  console.log("Upload Result:", uploadResult);
-
+  
+  console.log("(storeImageAction) Upload Result:", uploadResult);
   return {
     error: null,
     success: true,
