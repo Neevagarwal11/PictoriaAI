@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useId } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -16,6 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { toast } from "sonner";
+import { getPresignedStorageUrl } from "@/app/actions/model-actions";
 
 const ACCEPTED_FILE_TYPES = [
   "application/zip",
@@ -47,6 +49,8 @@ const formSchema = z.object({
 function ModelTrainingForm() {
 
 
+    const toastId = useId()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,9 +59,27 @@ function ModelTrainingForm() {
       gender: "man",
     },
   });
-  const fieldRef = form.register("zipFile")
+  const fileRef = form.register("zipFile")
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+
+    toast.loading("Uploading File..." , {id: toastId})
+
+    try{
+        const data = await getPresignedStorageUrl(values.zipFile[0].name)
+        console.log(data , "Data from Presigned URL: ");
+        if(data.error){
+            toast.error(data.error || "Failed to upload the file.")
+        }else{
+            toast.success("File uploaded successfully!", {id: toastId})
+        }
+
+    }catch(error){
+        const errorMessage = error instanceof Error? error.message: "Failed to start training."
+        toast.error(errorMessage, {id: toastId , duration:5000})
+    }
+
+
     console.log("Form Values: ", values);
   }
 
@@ -146,7 +168,7 @@ function ModelTrainingForm() {
                 </div>
 
                 <FormControl>
-                  <Input type="file" accept=".zip" {...field} onChange= { e => field.onChange(e.target.files)} />
+                  <Input type="file" accept=".zip" {...fileRef} onChange= { e => field.onChange(e.target.files)} />
                 </FormControl>
                 <FormDescription>
                   Upload a zip file containing the training images. Ensure the file size is under 45MB and the file type is zip.
