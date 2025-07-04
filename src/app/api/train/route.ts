@@ -1,3 +1,4 @@
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -29,6 +30,21 @@ export async function POST(request: NextRequest){
         }
 
         console.log("Input Data: ", input);
+
+        if(!input.fileKey  || !input.modelName){
+            return NextResponse.json({error : "Missing required fields: fileKey or modelName"}, {status:400});
+        }
+
+        const fileName = input.fileKey.replace('training-data/' ,  "")
+        const {data: fileUrl } = await supabaseAdmin.storage.from("training-data").createSignedUrl(fileName , 3600)
+
+        if(!fileUrl?.signedUrl){
+            return NextResponse.json({error: "Failed to get file URL"}, {status:500});
+        }
+        console.log("File URL: ", fileUrl.signedUrl);
+
+
+
 
         return NextResponse.json({
             success: true,

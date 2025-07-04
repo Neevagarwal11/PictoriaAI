@@ -71,7 +71,44 @@ function ModelTrainingForm() {
         if(data.error){
             toast.error(data.error || "Failed to upload the file.")
         }else{
-            toast.success("File uploaded successfully!", {id: toastId})
+            
+            
+            const urlResponse = await fetch(data.signedUrl, {
+                method:"PUT",
+                headers:{
+                    "Content-Type":values.zipFile[0].type
+                },
+                body: values.zipFile[0]
+            })
+
+            if(!urlResponse.ok){
+                throw new Error('Upload Failed')
+            }
+
+            const res = await urlResponse.json()
+            toast.success("File uploaded successfully!", {id: toastId}) 
+
+            console.log(res)
+
+            const formData = new FormData();
+            formData.append('fileKey' , res.Key)
+            formData.append('modelName' , values.modelName)
+            formData.append('gender' , values.gender)
+
+            const response = await fetch('/api/train' , {
+                method:"POST",
+                body: formData,
+            })
+            const results = await response.json()
+
+            if(!response.ok || results?.error){
+                throw new Error(results?.error || "Failed to train the model.")
+            }
+
+            toast.success("Model training started successfully! You'll receive a notification once it's completed", {id: toastId})
+
+
+            
         }
 
     }catch(error){
