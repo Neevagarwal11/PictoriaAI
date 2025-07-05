@@ -1,7 +1,14 @@
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import Replicate from "replicate";
 
+
+const replicate = new Replicate({
+    auth : process.env.REPLICATE_API_TOKEN!,
+})
+
+const WEBHOOK_URL = process.env.SITE_URL
 
 export async function POST(request: NextRequest){
     try{
@@ -36,12 +43,47 @@ export async function POST(request: NextRequest){
         }
 
         const fileName = input.fileKey.replace('training-data/' ,  "")
-        const {data: fileUrl } = await supabaseAdmin.storage.from("training-data").createSignedUrl(fileName , 3600)
+        const {data: fileUrl} = await supabaseAdmin.storage.from("training-data").createSignedUrl(fileName , 3600)
 
         if(!fileUrl?.signedUrl){
             return NextResponse.json({error: "Failed to get file URL"}, {status:500});
         }
         console.log("File URL: ", fileUrl.signedUrl);
+
+
+        //Create Model
+
+        // const hardware = await replicate.hardware.list()
+        // console.log("Available Hardware: ", hardware);  
+
+        const modelId = `${user.id}_${Date.now()}_${input.modelName.toLowerCase().replaceAll(" " , "_")}`
+
+        
+        await replicate.models.create("neevagarwal11" , modelId , { 
+            visibility:"private",
+            hardware: "gpu-a100-large",
+        })
+
+        //start training
+   const training = await replicate.trainings.create(
+  "ostris",
+  "flux-dev-lora-trainer",
+  "26dce37af90b9d997eeb970d92e47de3064d46c300504ae376c75bef6a9022d2",
+  {
+    // You need to create a model on Replicate that will be the destination for the trained version.
+    destination: `neevagarwal11/${modelId}`,
+    input: {
+      steps: 1200,
+      resolution: "1024",
+      input_images: fileUrl.signedUrl,
+      trigger_word: "ohwx",
+    },
+     webhook: `${WEBHOOK_URL}/api/webhooks/training`,
+     webhook_events_filter: ["completed"], 
+  }
+);
+
+console.log(training)
 
 
 
