@@ -1,5 +1,6 @@
+"use client"
 import { Database } from "@datatypes.types";
-import React from "react";
+import React, { useId } from "react";
 import {
   Card,
   CardContent,
@@ -29,6 +30,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import { deleteModel } from "@/app/actions/model-actions";
 
 type ModelType = {
   error: string | null;
@@ -58,6 +61,24 @@ function ModelsList({ models }: ModelsListProps) {
         </CardHeader>
       </Card>
     );
+  }
+
+  const toastId = useId()
+
+  const handelDeleteModel = async(id: number , model_id:string , model_version : string)=>{
+    toast.loading("Deleting model...." , {id:toastId})
+
+    const {success, error} = await deleteModel(id , model_id , model_version)
+
+    if(success){
+        toast.success("Model deleted successfully!" , {id:toastId})
+    }
+
+    if(error){
+        toast.error(error , {id:toastId})
+    }
+
+
   }
 
   return (
@@ -118,7 +139,8 @@ function ModelsList({ models }: ModelsListProps) {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction>Continue</AlertDialogAction>
+                      <AlertDialogAction onClick={()=>handelDeleteModel(model.id , model.model_id || "", model.version || " ")}
+                        className="bg-destructive hover:bg-destructive/90" >Delete</AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
