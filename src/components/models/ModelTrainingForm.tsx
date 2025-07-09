@@ -88,12 +88,13 @@ function ModelTrainingForm() {
             const res = await urlResponse.json()
             toast.success("File uploaded successfully!", {id: toastId}) 
 
-            console.log(res)
 
             const formData = new FormData();
             formData.append('fileKey' , res.Key)
             formData.append('modelName' , values.modelName)
             formData.append('gender' , values.gender)
+
+            toast.loading("Initiating model training....", {id:toastId})
 
             const response = await fetch('/api/train' , {
                 method:"POST",

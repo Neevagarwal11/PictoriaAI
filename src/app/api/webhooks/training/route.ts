@@ -75,20 +75,16 @@ export async function POST(req: Request) {
     });
 
     //Update supabase models tables
-    supabaseAdmin.from("models").update({
+    await supabaseAdmin.from("models").update({
         training_status : body.status,
         training_time : body.metrics?.total_time ?? null,
         version: body.output?.version.split(":")[1] ?? null
     }).eq("user_id" , userId).eq("model_name" , modelName)
 
 
-    //delete the training data from supabase storage
-    supabaseAdmin.storage.from('training-data').remove([`${userId}/${fileName}`])
-
 
 
     } else {
-
 
       // handel the failed and the cancelled status
       const { data, error } = await resend.emails.send({
@@ -102,16 +98,17 @@ export async function POST(req: Request) {
     });
 
     //Update supabase models tables
-    supabaseAdmin.from("models").update({
+   await supabaseAdmin.from("models").update({
         training_status : body.status,
     }).eq("user_id" , userId).eq("model_name" , modelName)
 
 
-    //delete the training data from supabase storage
-    supabaseAdmin.storage.from('training-data').remove([`${userId}/${fileName}`])
-
 
     }
+    
+    //delete the training data from supabase storage
+    await supabaseAdmin.storage.from('training-data').remove([`${fileName}`])
+
 
     return new NextResponse("OK" , {status:200})
 
