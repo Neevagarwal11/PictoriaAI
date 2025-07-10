@@ -33,6 +33,7 @@ import {
 import { Info } from "lucide-react";
 import { generateImageAction } from "@/app/actions/image-action";
 import useGeneratedStore from "@/store/useGeneratedStore";
+import { Tables } from "@datatypes.types";
 
 
 
@@ -66,13 +67,22 @@ export const ImageGenerationFormSchema = z.object({
     .max(50, { message: "Maximum inference steps is 50" }),
 });
 
-function Configuration() {
+interface configurationsProps{
+  userModels : Tables<"models">[];
+  model_id : string
+}
+
+
+
+function Configuration({userModels , model_id} : configurationsProps) {
   const generateImage = useGeneratedStore((state) => state.generateImage);
 
+
+  // Default Values in the form
   const form = useForm<z.infer<typeof ImageGenerationFormSchema>>({
     resolver: zodResolver(ImageGenerationFormSchema),
     defaultValues: {
-      model: "black-forest-labs/flux-dev",
+      model: model_id? `neevagarwal11/${model_id}` : "black-forest-labs/flux-dev",
       prompt: "",
       guidance: 3.5,
       num_outputs: 1,
@@ -150,6 +160,11 @@ function Configuration() {
                       <SelectItem value="black-forest-labs/flux-schnell">
                         Flux Schnell
                       </SelectItem>
+
+                      {
+                        userModels?.map(model=> model.training_status=== "succeeded" && <SelectItem key={model.id} value={`neevagarwal11/${model.model_id}:${model.version}`}>{model.model_name}</SelectItem>)
+                      }
+
                     </SelectContent>
                   </Select>
                   <FormMessage />

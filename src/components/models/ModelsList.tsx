@@ -12,6 +12,7 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { formatDistance } from "date-fns";
 import {
+  ArrowRight,
   CheckCircle2,
   Clock,
   Loader2,
@@ -32,6 +33,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { deleteModel } from "@/app/actions/model-actions";
+import { cn } from "@/lib/utils";
 
 type ModelType = {
   error: string | null;
@@ -155,9 +157,13 @@ function ModelsList({ models }: ModelsListProps) {
                 addSuffix: true,
               })}
             </CardDescription>
+
+
+              {/* Training Time and Gender */}
             <CardContent className="flex-1 p-0 pt-3">
               <div className="space-y-3">
                 <div className="grid grid-col-2 gap-3">
+            {/* Training Duration */}
                   <div className="rounded-lg bg-muted px-3 py-2">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Clock className="w-4 h-4" />
@@ -168,7 +174,7 @@ function ModelsList({ models }: ModelsListProps) {
                       {Math.round(Number(model.training_time) / 60) || NaN} mins
                     </p>
                   </div>
-
+              {/* Model Gender */}
                   <div className="rounded-lg bg-muted px-3 py-2">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <User2 className="w-4 h-4" />
@@ -180,6 +186,27 @@ function ModelsList({ models }: ModelsListProps) {
                 </div>
               </div>
             </CardContent>
+
+            <div className="pt-4">
+
+              <Link href={
+                model.training_status=== "succeeded" ? `/image-genration?model_id-${model.model_id}:${model.version}` : "#" 
+              } 
+              className={cn("inline-flex w-full group" , model.training_status !== "succeeded" && "pointer-events-none opacity-50")}
+              >
+
+              <Button className="w-full group-hover:bg-primary/90"
+              disabled={model.training_status !== "succeeded"}
+              >
+                Generate Image
+                <ArrowRight className="ml-2 w-4 h-4"/>
+              </Button>
+
+              </Link>
+
+            </div>
+
+
           </CardHeader>
         </Card>
       ))}
