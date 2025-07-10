@@ -85,7 +85,7 @@ function Configuration({userModels , model_id} : configurationsProps) {
       model: model_id? `neevagarwal11/${model_id}` : "black-forest-labs/flux-dev",
       prompt: "",
       guidance: 3.5,
-      num_outputs: 1,
+      num_outputs: 1, 
       output_format: "jpg",
       aspect_ratio: "1:1",
       output_quality: 80,
@@ -114,6 +114,22 @@ function Configuration({userModels , model_id} : configurationsProps) {
   }, [form]);
 
   async function onSubmit(values: z.infer<typeof ImageGenerationFormSchema>) {
+
+    const newValues = {
+      ...values,
+      prompt: values.model.startsWith("neevagarwal11") ?
+      (()=>{
+
+        const modelId = values.model.replace("neevagarwal11/" , "").split(":")[0];
+        const selectedModel =  userModels.find(model => model.model_id === modelId) 
+
+
+        return `photo of a ${selectedModel?.trigger_word || "ohwx"} ${selectedModel?.gender} , ${values.prompt}`
+      })
+      
+      : values.prompt,
+    }
+
     await generateImage(values);
     // console.log(error , success, data ,  "onSubmit function in configurations.tsx");OKK
   }

@@ -72,9 +72,10 @@ function ImageDialog({image , onClose} : ImageDialogProps) {
       <hr className='inline-block w-full border-primary/30 my-2' />
 
       <div className='flex flex-wrap gap-3'>
-        <Badge variant= {"secondary"} className='rounded-full border border-primary/30 px-4 py-2 test-sm font-normal'>
+        <Badge variant= {"secondary"} className='rounded-full max-w-[85%] border border-primary/30 px-4 py-2 test-sm font-normal'>
           <span className='text-primary uppercase mr-2 font-semibold'>Model ID:</span>
           {image.model}
+          {image.model?.startsWith("neevagarwal11") ? image.model.split('/')[1].split(":")[0] : image.model}
         </Badge>
         <Badge variant= {"secondary"} className='rounded-full border border-primary/30 px-4 py-2 test-sm font-normal'>
           <span className='text-primary uppercase mr-2 font-semibold'>Aspect Ratio:</span>
