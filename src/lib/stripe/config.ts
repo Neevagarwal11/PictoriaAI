@@ -15,4 +15,4 @@ export const stripe = new Stripe(
       url: 'https://github.com/vercel/nextjs-subscription-payments'
     }
   }
-);
+); 
