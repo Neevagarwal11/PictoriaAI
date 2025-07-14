@@ -30,7 +30,7 @@ const upsertProductRecord = async (product: Stripe.Product) => {
 
 const upsertPriceRecord = async (
   price: Stripe.Price,
-  retryCount = 0,
+  retryCount = 0, 
   maxRetries = 3
 ) => {
   const priceData: Price = {
@@ -42,7 +42,7 @@ const upsertPriceRecord = async (
     unit_amount: price.unit_amount ?? null,
     interval: price.recurring?.interval ?? null,
     interval_count: price.recurring?.interval_count ?? null,
-    trial_period_days: price.recurring?.trial_period_days ?? TRIAL_PERIOD_DAYS
+    trial_period_days: price.recurring?.trial_period_days 
   };
 
   const { error: upsertError } = await supabaseAdmin
