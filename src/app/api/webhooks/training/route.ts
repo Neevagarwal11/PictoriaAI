@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     const timestamp = req.headers.get("webhook-timestamp") ?? "";
     const webhookSignature = req.headers.get("webhook-signature") ?? "";
 
-    const signedContent = `${id}.${timestamp}.${JSON.stringify}`;
+    const signedContent = `${id}.${timestamp}.${JSON.stringify(body)}`;
 
     const secret = await replicate.webhooks.default.secret.get();
 
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     const isValid = expectedSignatures.some(
       (expectedSignature) => expectedSignature === signature
     );
-    console.log(isValid);
+    // console.log(isValid); OK
 
     if (!isValid) {
       return new NextResponse("Invalid Signature", { status: 401 });
@@ -63,55 +63,56 @@ export async function POST(req: Request) {
 
     if (body.status === "succeeded") {
       //send a successful status email
-      
       const { data, error } = await resend.emails.send({
-          from: "Pictoria Ai <onboarding@resend.dev>",
-          to: [userEmail],
+        from: "Pictoria Ai <onboarding@resend.dev>",
+        to: [userEmail],
         subject: "Model Training Completed",
         react: EmailTemplate({
-            userName,
-            message: "Your Model Training has been completed.",
+          userName,
+          message: "Your Model Training has been completed.",
         }),
-    });
+      });
 
-    //Update supabase models tables
-    await supabaseAdmin.from("models").update({
-        training_status : body.status,
-        training_time : body.metrics?.total_time ?? null,
-        version: body.output?.version.split(":")[1] ?? null
-    }).eq("user_id" , userId).eq("model_name" , modelName)
+      //Update supabase models tables
+      await supabaseAdmin
+        .from("models")
+        .update({
+          training_status: body.status,
+          training_time: body.metrics?.total_time ?? null,
+          version: body.output?.version.split(":")[1] ?? null,
+        })
+        .eq("user_id", userId)
+        .eq("model_name", modelName);
 
-
-
+        
 
     } else {
-
       // handel the failed and the cancelled status
       const { data, error } = await resend.emails.send({
-          from: "Pictoria Ai <onboarding@resend.dev>",
-          to: [userEmail],
+        from: "Pictoria Ai <onboarding@resend.dev>",
+        to: [userEmail],
         subject: `Model Training ${body.status}`,
         react: EmailTemplate({
-            userName,
-            message:`Your model has been ${body.status}` ,
+          userName,
+          message: `Your model has been ${body.status}`,
         }),
-    });
+      });
 
-    //Update supabase models tables
-   await supabaseAdmin.from("models").update({
-        training_status : body.status,
-    }).eq("user_id" , userId).eq("model_name" , modelName)
-
-
-
+      //Update supabase models tables
+      await supabaseAdmin
+        .from("models")
+        .update({
+          training_status: body.status,
+          version: body.output?.version.split(":")[1] ?? null,
+        })
+        .eq("user_id", userId)
+        .eq("model_name", modelName);
     }
-    
+
     //delete the training data from supabase storage
-    await supabaseAdmin.storage.from('training-data').remove([`${fileName}`])
+    await supabaseAdmin.storage.from("training-data").remove([`${fileName}`]);
 
-
-    return new NextResponse("OK" , {status:200})
-
+    return new NextResponse("OK", { status: 200 });
   } catch (error) {
     console.log("Webhook Processing Error", error);
     return new NextResponse("Internal server error", { status: 500 });

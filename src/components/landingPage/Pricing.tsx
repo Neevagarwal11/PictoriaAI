@@ -8,6 +8,7 @@ import { Tables } from "@datatypes.types";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { Check } from "lucide-react";
 
 
 type Product = Tables<"products">
@@ -29,7 +30,7 @@ function Pricing({products , mostPopularProduct = "pro"} : PricingProps) {
 
   return (
     <>
-    <div className="w-full bg-muted flex flex-col items-center justify-center">
+    <div className="w-full bg-muted py-12 px-8 flex flex-col items-center justify-center">
       <div className="text-center flex flex-col items-center justify-center">
         <div className="w-full container mx-auto py-32 flex flex-col items-center justify-center space-y-8">
           {/* Magic Ui compo */}
@@ -97,8 +98,8 @@ function Pricing({products , mostPopularProduct = "pro"} : PricingProps) {
 
 
 
-                return <div key={product.id} className="border bg-background rounded-xl shadow-sm h-fit" >
-                   <div className="p-6">
+                return <div key={product.id} className={cn('border bg-background rounded-xl shadow-sm h-fit divide-border border-border divide-y')} >
+                   <div className="p-4  ">
                         <h2 className="text-2xl leading-6 font-semibold text-foreground flex items-center justify-between">{product.name}
 
                             {
@@ -124,7 +125,18 @@ function Pricing({products , mostPopularProduct = "pro"} : PricingProps) {
 
                             <div className="pt-6 pb-8 px-6">
 
-                                <h3>What is </h3>
+                                <h3 className="uppercase tracking-wide text-foreground font-medium text-sm">What&apos;s included </h3>
+                                <ul className="mt-6 space-y-4">
+                                    {
+                                        Object.values(product.metadata || {}).map(
+                                            (feature , index) => {
+                                                if(feature){
+                                                    return <li className="flex space-x-3" key={index}> <Check className="w-5 h-5 text-primary"/> <span>{feature} </span>  </li>
+                                                }
+                                            }
+                                        )
+                                    }
+                                </ul>
                                 
                             </div>
 

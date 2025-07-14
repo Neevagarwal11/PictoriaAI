@@ -1,12 +1,11 @@
 'use server'
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
 import { create } from "domain";
 
 // We need a Presigned URL to upload the file to Supabase Storage as client-side uploads are not allowed in Supabase Storage
 // This function generates a signed URL for uploading files to the 'training-data' bucket in Supabase Storage.
 export async function getPresignedStorageUrl(filePath: string){
-
 
 const supabase = await createClient(
     process.env.SUPABASE_URL!,
@@ -31,13 +30,14 @@ export async function fetchModels(){
     );
     const{data : {user}} = await supabase.auth.getUser()
 
+    const {data , error, count} = await supabase.from('models').select('*' , {count:"exact"}).eq('user_id'  , user?.id).order('created_at' , {ascending:false})
 
-    const {data , error, count} = await supabase.from("models").select("*" , {count:"exact"}).eq('user_id'  , user?.id).order('created_at' , {ascending:false})
+    // console.log("Fetched Model Data" , data)  OK
 
     return{
-        error:error?.message || null,
+        error:error?.message,
         success: !error,
-        data: data || null,
+        data: data,
         count: count || 0,
     }
 
@@ -62,12 +62,12 @@ export async function deleteModel(id: number , model_id:string , model_version:s
             })
 
             if(!res.ok){
-                throw new Error('Failed to delete model version from Replicate')
+                throw new Error('Failed to delete model version from Replicate NO MODEL VERSION')
             }
 
 
         }catch(error){
-            console.error('Failed to delete model version from Replicate.')
+            console.error('Failed to delete model version from Replicate. NO MODEL VERSION')
 
             return{
                 error: "Failed to delete model version from Replicate.",
@@ -87,12 +87,12 @@ export async function deleteModel(id: number , model_id:string , model_version:s
             })
 
             if(!res.ok){
-                throw new Error('Failed to delete model from Replicate')
+                throw new Error('Failed to delete model from Replicate MODEL ID')
             }
 
 
         }catch(error){
-            console.error('Failed to delete model  from Replicate.')
+            console.error('Failed to delete model  from Replicate. MODEL ID')
 
             return{
                 error: "Failed to delete model from Replicate.",
