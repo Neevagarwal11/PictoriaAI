@@ -15,7 +15,7 @@ async function ModelsPage() {
           View and Manage Trained Models
         </p>
       </div>
-      <ModelsList models={data}></ModelsList>
+      <ModelsList models={data} ></ModelsList>
 
     </section>
   )

@@ -30,9 +30,9 @@ function Pricing({products , mostPopularProduct = "pro"} : PricingProps) {
 
   return (
     <>
-    <div className="w-full bg-muted py-12 px-8 flex flex-col items-center justify-center">
+    <div className="w-full bg-muted py-6 px-8 flex flex-col items-center justify-center">
       <div className="text-center flex flex-col items-center justify-center">
-        <div className="w-full container mx-auto py-32 flex flex-col items-center justify-center space-y-8">
+        <div className="w-full container mx-auto py-16 flex flex-col items-center justify-center space-y-8">
           {/* Magic Ui compo */}
           <div className="group relative mx-auto flex items-center justify-center rounded-full px-4 py-1.5 shadow-[inset_0_-8px_10px_#8fdfff1f] transition-shadow duration-500 ease-out hover:shadow-[inset_0_-5px_10px_#8fdfff3f] ">
             <span
@@ -64,7 +64,7 @@ function Pricing({products , mostPopularProduct = "pro"} : PricingProps) {
       </div>
 
 {/* Billing Period */}
-      <div className="flex justify-center items-center space-x-4 py-8">
+      <div className="flex justify-center items-center space-x-4 py-12">
         <Label htmlFor="pricing-switch" className="font-semibold text-base">
           Monthly
         </Label>
@@ -82,7 +82,7 @@ function Pricing({products , mostPopularProduct = "pro"} : PricingProps) {
         </Label>
       </div>
 
-      <div className="grid grid-cols-3 place-items-center mx-auto gap-8 ">
+      <div className="grid grid-cols-3 place-items-center mx-auto gap-8">
         {
             products.map(product => {
 
@@ -98,8 +98,10 @@ function Pricing({products , mostPopularProduct = "pro"} : PricingProps) {
 
 
 
-                return <div key={product.id} className={cn('border bg-background rounded-xl shadow-sm h-fit divide-border border-border divide-y')} >
-                   <div className="p-4  ">
+                return <div key={product.id} className={cn('border bg-background rounded-xl shadow-sm h-fit divide-border divide-y' , 
+                   product.name?.toLowerCase() === mostPopularProduct.toLowerCase()? "border-primary bg-background drop-shadow-md scale-105" : "border-border"
+                )} >
+                   <div className="p-6">
                         <h2 className="text-2xl leading-6 font-semibold text-foreground flex items-center justify-between">{product.name}
 
                             {
@@ -131,7 +133,7 @@ function Pricing({products , mostPopularProduct = "pro"} : PricingProps) {
                                         Object.values(product.metadata || {}).map(
                                             (feature , index) => {
                                                 if(feature){
-                                                    return <li className="flex space-x-3" key={index}> <Check className="w-5 h-5 text-primary"/> <span>{feature} </span>  </li>
+                                                    return <li className="flex space-x-3" key={index}> <Check className="w-5 h-5 text-primary"/> <span className="text-sm text-muted-foreground">{feature} </span>  </li>
                                                 }
                                             }
                                         )

@@ -103,7 +103,7 @@ export async function POST(req: Request) {
         .from("models")
         .update({
           training_status: body.status,
-          version: body.output?.version.split(":")[1] ?? null,
+          version: body.version ?? null,
         })
         .eq("user_id", userId)
         .eq("model_name", modelName);
