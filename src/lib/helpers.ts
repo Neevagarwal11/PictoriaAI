@@ -57,7 +57,7 @@ const toastKeyMap: { [key: string]: string[] } = {
   error: ['error', 'error_description']
 };
 
-const getToastRedirect = (
+const getToastRedirect = (  
   path: string, //base path to redirect
   toastType: string,
   toastName: string,

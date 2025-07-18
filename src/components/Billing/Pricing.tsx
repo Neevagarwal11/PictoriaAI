@@ -12,6 +12,8 @@ import { Check } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 import { usePathname, useRouter } from "next/navigation";
 import { checkoutWithStripe } from "@/lib/stripe/server";
+import { getErrorRedirect } from "@/lib/helpers";
+import { getStripe } from "@/lib/stripe/client";
 type Product = Tables<"products">;
 type Price = Tables<"prices">;
 type Subscription = Tables<"subscriptions">;
@@ -77,10 +79,21 @@ function Pricing({user , products, mostPopularProduct = "pro", subscription }: P
       return router.push('/login') 
     }
 
-    await checkoutWithStripe(price , currentPath)
+   const {errorRedirect , sessionId} =  await checkoutWithStripe(price , currentPath)
 
+   if(errorRedirect){
+    return router.push(errorRedirect)
+   }
 
-    return "stripe checkout function"
+   if(!sessionId){
+    return router.push(getErrorRedirect(
+      currentPath, "An unknown error occured" , "Please try again later or contact us."
+    ))
+   }
+
+   const stripe = await getStripe()
+   stripe?.redirectToCheckout({sessionId})
+
   }
   
   const handelStripePortalRequest = () =>{

@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
 import { toDateTime } from '@/lib/helpers';
 import { stripe } from '@/lib/stripe/config';
 import Stripe from 'stripe';
@@ -255,6 +255,8 @@ const manageSubscriptionStatusChange = async (
       ? toDateTime(subscription.trial_end).toISOString()
       : null
   };
+
+  console.log("subscriptionData" , subscriptionData)
 
   const { error: upsertError } = await supabaseAdmin
     .from('subscriptions')
