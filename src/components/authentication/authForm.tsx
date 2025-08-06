@@ -8,7 +8,7 @@ import { Link } from "lucide-react";
 import ResetForm from "./ResetForm";
 
 function authForm({state} : {state:string}) {
-  const [mode, setMode] = useState("state");
+  const [mode, setMode] = useState("login");
 
   return (
     <div className="space-y-6">

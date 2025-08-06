@@ -44,6 +44,7 @@ export async function checkoutWithStripe(
     // Retrieve or create the customer in Stripe
     let customer: string;
     try {
+      // console.log("Supabase user:", user); OK
       customer = await createOrRetrieveCustomer({
         uuid: user?.id || "",
         email: user?.email || "",
@@ -54,6 +55,7 @@ export async function checkoutWithStripe(
     }
 
     let params: Stripe.Checkout.SessionCreateParams = {
+      
       allow_promotion_codes: true,
       billing_address_collection: "required",
       customer,

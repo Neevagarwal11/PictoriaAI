@@ -3,6 +3,7 @@ import { toDateTime } from '@/lib/helpers';
 import { stripe } from '@/lib/stripe/config';
 import Stripe from 'stripe';
 import type { Database, Tables, TablesInsert } from '@datatypes.types';
+import { cn } from "../utils";
 
 
 export const supabaseAdmin = createClient(
@@ -20,7 +21,7 @@ const upsertProductRecord = async (product: Stripe.Product) => {
     metadata: product.metadata
   };
 
-  const { error: upsertError } = await supabaseAdmin
+  const { error: upsertError } = await (await supabaseAdmin)
     .from('products')
     .upsert([productData]);
   if (upsertError)
@@ -45,7 +46,7 @@ const upsertPriceRecord = async (
     trial_period_days: price.recurring?.trial_period_days 
   };
 
-  const { error: upsertError } = await supabaseAdmin
+  const { error: upsertError } = await (await supabaseAdmin)
     .from('prices')
     .upsert([priceData]);
 
@@ -67,7 +68,7 @@ const upsertPriceRecord = async (
 };
 
 const deleteProductRecord = async (product: Stripe.Product) => {
-  const { error: deletionError } = await supabaseAdmin
+  const { error: deletionError } = await (await supabaseAdmin)
     .from('products')
     .delete()
     .eq('id', product.id);
@@ -77,7 +78,7 @@ const deleteProductRecord = async (product: Stripe.Product) => {
 };
 
 const deletePriceRecord = async (price: Stripe.Price) => {
-  const { error: deletionError } = await supabaseAdmin
+  const { error: deletionError } = await (await supabaseAdmin)
     .from('prices')
     .delete()
     .eq('id', price.id);
@@ -86,7 +87,7 @@ const deletePriceRecord = async (price: Stripe.Price) => {
 };
 
 const upsertCustomerToSupabase = async (uuid: string, customerId: string) => {
-  const { error: upsertError } = await supabaseAdmin
+  const { error: upsertError } = await (await supabaseAdmin)
     .from('customers')
     .upsert([{ id: uuid, stripe_customer_id: customerId }]);
 
@@ -100,7 +101,7 @@ const createCustomerInStripe = async (uuid: string, email: string) => {
   const customerData = { metadata: { supabaseUUID: uuid }, email: email };
   const newCustomer = await stripe.customers.create(customerData);
   if (!newCustomer) throw new Error('Stripe customer creation failed.');
-
+  console.log(`Created new Stripe customer: ${newCustomer.id}`);
   return newCustomer.id;
 };
 
@@ -113,7 +114,7 @@ const createOrRetrieveCustomer = async ({
 }) => {
   // Check if the customer already exists in Supabase
   const { data: existingSupabaseCustomer, error: queryError } =
-    await supabaseAdmin
+    await (await supabaseAdmin)
       .from('customers')
       .select('*')
       .eq('id', uuid)
@@ -130,11 +131,12 @@ const createOrRetrieveCustomer = async ({
       existingSupabaseCustomer.stripe_customer_id
     );
     stripeCustomerId = existingStripeCustomer.id;
+    console.log('stripeCustomerId', stripeCustomerId);
   } else {
     // If Stripe ID is missing from Supabase, try to retrieve Stripe customer ID by email
     const stripeCustomers = await stripe.customers.list({ email: email });
-    stripeCustomerId =
-      stripeCustomers.data.length > 0 ? stripeCustomers.data[0].id : undefined;
+    stripeCustomerId = stripeCustomers.data.length > 0 ? stripeCustomers.data[0].id : undefined;
+    console.log('stripeCustomerId from email', stripeCustomerId);
   }
 
   // If still no stripeCustomerId, create a new customer in Stripe
@@ -146,7 +148,7 @@ const createOrRetrieveCustomer = async ({
   if (existingSupabaseCustomer && stripeCustomerId) {
     // If Supabase has a record but doesn't match Stripe, update Supabase record
     if (existingSupabaseCustomer.stripe_customer_id !== stripeCustomerId) {
-      const { error: updateError } = await supabaseAdmin
+      const { error: updateError } = await (await supabaseAdmin)
         .from('customers')
         .update({ stripe_customer_id: stripeCustomerId })
         .eq('id', uuid);
@@ -191,7 +193,7 @@ const copyBillingDetailsToCustomer = async (
   if (!name || !phone || !address) return;
   //@ts-ignore
   await stripe.customers.update(customer, { name, phone, address });
-  const { error: updateError } = await supabaseAdmin
+  const { error: updateError } = await (await supabaseAdmin)
     .from('users')
     .update({
       billing_address: { ...address },
@@ -207,7 +209,7 @@ const manageSubscriptionStatusChange = async (
   createAction = false
 ) => {
   // Get customer's UUID from mapping table.
-  const { data: customerData, error: noCustomerError } = await supabaseAdmin
+  const { data: customerData, error: noCustomerError } = await (await supabaseAdmin)
     .from('customers')
     .select('id')
     .eq('stripe_customer_id', customerId)
@@ -258,7 +260,7 @@ const manageSubscriptionStatusChange = async (
 
   console.log("subscriptionData" , subscriptionData)
 
-  const { error: upsertError } = await supabaseAdmin
+  const { error: upsertError } = await (await supabaseAdmin)
     .from('subscriptions')
     .upsert([subscriptionData]);
   if (upsertError)

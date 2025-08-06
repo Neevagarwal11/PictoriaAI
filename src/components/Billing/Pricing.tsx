@@ -73,8 +73,6 @@ function Pricing({user , products, mostPopularProduct = "pro", subscription }: P
 
   const handelStripeCheckout = async (price : Price) =>{
     // console.log("Handel Stripe Checkout Function" , price)
-
-
     if(!user){
       return router.push('/login') 
     }
