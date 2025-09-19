@@ -31,10 +31,11 @@ export async function checkoutWithStripe(
     );
     const {
       error,
-      data: { user },
-    } = await supabase.auth.getUser();
+      data: { users },
+    } = await supabase.from('users').select('*').limit(1).single();
+    // console.log("users" + users);
 
-    if (error || !user) {
+    if (error || !users) {
       console.error(error);
       throw new Error("Could not get user session.");
     }
@@ -42,13 +43,14 @@ export async function checkoutWithStripe(
     // Retrieve or create the customer in Stripe
     let customer: string;
     try {
+      
       customer = await createOrRetrieveCustomer({
-        uuid: user?.id || "",
-        email: user?.email || "",
+        uuid: users?.id || "",
+        email: users?.email || "",
       });
     } catch (err) {
       console.error(err);
-      throw new Error("Unable to access customer record.");
+      throw new Error("Unable to access customer record. customerData");
     }
 
     let params: Stripe.Checkout.SessionCreateParams = {
@@ -93,7 +95,7 @@ export async function checkoutWithStripe(
       session = await stripe.checkout.sessions.create(params);
     } catch (err) {
       console.error(err);
-      throw new Error("Unable to create checkout session.");
+      throw new Error("Unable to create checkout session. stripe.checkout");
     }
 
     // Instead of returning a Response, just return the data or error.
@@ -131,9 +133,9 @@ export async function createStripePortal(currentPath: string) {
     );
     const {
       error,
-      data: { user },
+      data: { user},
     } = await supabase.auth.getUser();
-
+    console.log(user);
     if (!user) {
       if (error) {
         console.error(error);
@@ -149,7 +151,7 @@ export async function createStripePortal(currentPath: string) {
       });
     } catch (err) {
       console.error(err);
-      throw new Error("Unable to access customer record.");
+      throw new Error("Unable to access customer record. createStripePortal");
     }
 
     if (!customer) {

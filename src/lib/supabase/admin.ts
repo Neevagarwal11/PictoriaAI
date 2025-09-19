@@ -113,12 +113,11 @@ const createOrRetrieveCustomer = async ({
 }) => {
   // Check if the customer already exists in Supabase
   const { data: existingSupabaseCustomer, error: queryError } =
-    await supabaseAdmin
+    await (supabaseAdmin)
       .from('customers')
       .select('*')
       .eq('id', uuid)
       .maybeSingle();
-
   if (queryError) {
     throw new Error(`Supabase customer lookup failed: ${queryError.message}`);
   }
