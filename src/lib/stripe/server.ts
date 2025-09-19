@@ -43,7 +43,8 @@ export async function checkoutWithStripe(
     // Retrieve or create the customer in Stripe
     let customer: string;
     try {
-      
+
+
       customer = await createOrRetrieveCustomer({
         uuid: users?.id || "",
         email: users?.email || "",
