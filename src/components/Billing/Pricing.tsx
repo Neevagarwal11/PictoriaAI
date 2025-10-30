@@ -50,9 +50,10 @@ const renderPricingButton = ({
 
 }) => {
 
+
  if(user && !subscription){
   return (
-    <Button className="mt-8 w-full font-semibold" variant={ product.name?.toLowerCase() === mostPopularProduct.toLowerCase() ? "default" : "secondary"} onClick={()=> handelStripeCheckout(price)}>
+    <Button className="mt-8 w-full font-semibold" variant={ product?.name?.toLowerCase() === mostPopularProduct.toLowerCase() ? "default" : "secondary"} onClick={()=> handelStripeCheckout(price)}>
       Subscribe
     </Button>
   )
@@ -74,7 +75,6 @@ function Pricing({user , products, mostPopularProduct = "pro", subscription }: P
   const handelStripeCheckout = async (price : Price) =>{
     // console.log("Handel Stripe Checkout Function" , price)
 
-
     if(!user){
       return router.push('/login') 
     }
@@ -95,11 +95,14 @@ function Pricing({user , products, mostPopularProduct = "pro", subscription }: P
    stripe?.redirectToCheckout({sessionId})
 
   }
-  
-  const handelStripePortalRequest = () =>{
-    return "stripe checkout function"
 
-  }
+
+
+  const handelStripePortalRequest =async () =>{
+    return "stripe portal function"
+
+  }  
+
 
 
   return (

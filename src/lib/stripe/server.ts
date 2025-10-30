@@ -2,7 +2,7 @@
 
 import Stripe from "stripe";
 import { stripe } from "@/lib/stripe/config";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from '@/lib/supabase/server'
 import { createOrRetrieveCustomer } from "@/lib/supabase/admin";
 import {
   getURL,
@@ -25,17 +25,14 @@ export async function checkoutWithStripe(
   try {
     // Get the user from Supabase auth
 
-    const supabase = await createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!
+  const supabase = await createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_ANON_KEY!
     );
-    const {
-      error,
-      data: { users },
-    } = await supabase.from('users').select('*').limit(1).single();
-    // console.log("users" + users);
+    const { data: { user }, error } = await supabase.auth.getUser();
+    // console.log("user in checkoutWithStripe", user);       OK
 
-    if (error || !users) {
+    if (error || !user) {
       console.error(error);
       throw new Error("Could not get user session.");
     }
@@ -46,8 +43,8 @@ export async function checkoutWithStripe(
 
 
       customer = await createOrRetrieveCustomer({
-        uuid: users?.id || "",
-        email: users?.email || "",
+        uuid: user?.id || "",
+        email: user?.email || "",
       });
     } catch (err) {
       console.error(err);
@@ -92,7 +89,7 @@ export async function checkoutWithStripe(
 
     // Create a checkout session in Stripe
     let session;
-    try {
+    try{
       session = await stripe.checkout.sessions.create(params);
     } catch (err) {
       console.error(err);
@@ -111,7 +108,7 @@ export async function checkoutWithStripe(
         errorRedirect: getErrorRedirect(
           redirectPath,
           error.message,
-          "Please try again later or contact a system administrator."
+          "Please try again later or contact a system administrator. Error in server checkoutWithStripe"
         ),
       };
     } else {
@@ -119,7 +116,7 @@ export async function checkoutWithStripe(
         errorRedirect: getErrorRedirect(
           redirectPath,
           "An unknown error occurred.",
-          "Please try again later or contact a system administrator."
+          "Please try again later or contact a system administrator. Error in server checkoutWithStripe"
         ),
       };
     }

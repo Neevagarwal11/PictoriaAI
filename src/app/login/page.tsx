@@ -12,7 +12,7 @@ interface searchParams{
 async function AuthenticationPage({searchParams} : {searchParams : Promise<searchParams>}) {
 
   const {state} = await searchParams
-  // console.log(state) OK
+  // console.log(state)  OK
 
 
   return (

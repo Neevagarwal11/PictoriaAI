@@ -1,9 +1,13 @@
-import { createClient } from "@/lib/supabase/server";
 import { toDateTime } from '@/lib/helpers';
 import { stripe } from '@/lib/stripe/config';
+import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import type { Database, Tables, TablesInsert } from '@datatypes.types';
 
+type Product = Tables<'products'>;
+type Price = Tables<'prices'>;
+
+const TRIAL_PERIOD_DAYS = 0;
 
 export const supabaseAdmin = createClient(
     process.env.SUPABASE_URL || "",
@@ -30,7 +34,7 @@ const upsertProductRecord = async (product: Stripe.Product) => {
 
 const upsertPriceRecord = async (
   price: Stripe.Price,
-  retryCount = 0, 
+  retryCount = 0,
   maxRetries = 3
 ) => {
   const priceData: Price = {
@@ -42,7 +46,9 @@ const upsertPriceRecord = async (
     unit_amount: price.unit_amount ?? null,
     interval: price.recurring?.interval ?? null,
     interval_count: price.recurring?.interval_count ?? null,
-    trial_period_days: price.recurring?.trial_period_days 
+    trial_period_days: price.recurring?.trial_period_days ?? TRIAL_PERIOD_DAYS,
+    description: null,
+    metadata: null
   };
 
   const { error: upsertError } = await supabaseAdmin
@@ -113,11 +119,12 @@ const createOrRetrieveCustomer = async ({
 }) => {
   // Check if the customer already exists in Supabase
   const { data: existingSupabaseCustomer, error: queryError } =
-    await (supabaseAdmin)
+    await supabaseAdmin
       .from('customers')
       .select('*')
       .eq('id', uuid)
       .maybeSingle();
+
   if (queryError) {
     throw new Error(`Supabase customer lookup failed: ${queryError.message}`);
   }
@@ -221,41 +228,38 @@ const manageSubscriptionStatusChange = async (
     expand: ['default_payment_method']
   });
   // Upsert the latest status of the subscription object.
-  const subscriptionData: TablesInsert<'subscriptions'> = {
-    id: subscription.id,
-    user_id: uuid,
-    metadata: subscription.metadata,
-    status: subscription.status,
-    price_id: subscription.items.data[0].price.id,
-    //TODO check quantity on subscription
-    // @ts-ignore
-    quantity: subscription.quantity,
-    cancel_at_period_end: subscription.cancel_at_period_end,
-    cancel_at: subscription.cancel_at
-      ? toDateTime(subscription.cancel_at).toISOString()
-      : null,
-    canceled_at: subscription.canceled_at
-      ? toDateTime(subscription.canceled_at).toISOString()
-      : null,
-    current_period_start: toDateTime(
-      subscription.current_period_start
-    ).toISOString(),
-    current_period_end: toDateTime(
-      subscription.current_period_end
-    ).toISOString(),
-    created: toDateTime(subscription.created).toISOString(),
-    ended_at: subscription.ended_at
-      ? toDateTime(subscription.ended_at).toISOString()
-      : null,
-    trial_start: subscription.trial_start
-      ? toDateTime(subscription.trial_start).toISOString()
-      : null,
-    trial_end: subscription.trial_end
-      ? toDateTime(subscription.trial_end).toISOString()
-      : null
-  };
 
-  console.log("subscriptionData" , subscriptionData)
+  const safeToISOString = (value: number | null | undefined, fallback?: number) =>
+  value
+    ? toDateTime(value).toISOString()
+    : fallback
+    ? toDateTime(fallback).toISOString()
+    : toDateTime(Date.now() / 1000).toISOString(); // fallback to now
+
+
+  const subscriptionData: TablesInsert<'subscriptions'> = {       //OK Subscription Table been upserted
+     id: subscription.id, 
+  user_id: uuid,
+  metadata: subscription.metadata,
+  status: subscription.status,
+  price_id: subscription.items.data[0].price.id,
+  quantity: (subscription as any).quantity,
+  cancel_at_period_end: subscription.cancel_at_period_end,
+  cancel_at: safeToISOString(subscription.cancel_at),
+  canceled_at: safeToISOString(subscription.canceled_at),
+  current_period_start: safeToISOString(
+    subscription.current_period_start,
+    subscription.created
+  ),
+  current_period_end: safeToISOString(
+    subscription.current_period_end,
+    subscription.created
+  ),
+  created: safeToISOString(subscription.created),
+  ended_at: safeToISOString(subscription.ended_at),
+  trial_start: safeToISOString(subscription.trial_start),
+  trial_end: safeToISOString(subscription.trial_end)
+  };
 
   const { error: upsertError } = await supabaseAdmin
     .from('subscriptions')

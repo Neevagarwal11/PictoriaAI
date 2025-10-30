@@ -11,8 +11,8 @@ export default async function Home() {
   )
 
   const [user , products] = await Promise.all([
-    getUser(supabase),   
-    getProducts(supabase)
+    getUser(supabase),    //gets currently logged in user
+    getProducts(supabase) //gets list of active products from supabase
   ])
 
   // if(user){
