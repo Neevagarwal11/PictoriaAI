@@ -2,7 +2,7 @@ import { toDateTime } from '@/lib/helpers';
 import { stripe } from '@/lib/stripe/config';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
-import type { Database, Tables, TablesInsert } from '@datatypes.types';
+import type { Database, Json, Tables, TablesInsert } from '@datatypes.types';
 
 type Product = Tables<'products'>;
 type Price = Tables<'prices'>;
@@ -47,8 +47,7 @@ const upsertPriceRecord = async (
     interval: price.recurring?.interval ?? null,
     interval_count: price.recurring?.interval_count ?? null,
     trial_period_days: price.recurring?.trial_period_days ?? TRIAL_PERIOD_DAYS,
-    description: null,
-    metadata: null
+    metadata: price.metadata ?? null,
   };
 
   const { error: upsertError } = await supabaseAdmin
@@ -280,11 +279,32 @@ const manageSubscriptionStatusChange = async (
     );
 };
 
+const updateUserCredits = async (userId: string , metadata:Json)=>{
+  const creditsData: TablesInsert<"credits"> = {
+    image_generation_count : (metadata as {image_generation_count?:number}).image_generation_count ?? 0,
+    model_training_count : (metadata as {model_training_count?:number}).model_training_count ?? 0,
+    max_image_generation_count : (metadata as {max_image_generation_count?:number}).max_image_generation_count ?? 0,
+    max_model_training_count : (metadata as {max_model_training_count?:number}).max_model_training_count ?? 0,
+  }
+
+
+  const { error : upsertError} = await supabaseAdmin.from("credits").update(creditsData).eq("user_id" , userId);
+  if(upsertError){
+    throw new Error(`Credits update failed: ${upsertError.message}`);
+  }
+
+  console.log("Updated user credits for user:", userId);
+
+
+
+}
+
 export {
   upsertProductRecord,
   upsertPriceRecord,
   deleteProductRecord,
   deletePriceRecord,
   createOrRetrieveCustomer,
-  manageSubscriptionStatusChange
+  manageSubscriptionStatusChange,
+  updateUserCredits
 };
