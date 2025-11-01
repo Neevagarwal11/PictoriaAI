@@ -3,6 +3,9 @@ import React from 'react'
 import { getProducts, getSubscription, getUser } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import PlanSummary from "@/components/Billing/planSummary";
+import { getCredits } from "@/app/actions/credit-actions";
+import Pricing from "@/components/Billing/Pricing";
+import { sub } from "date-fns";
 
 async function Billingpage() {
 
@@ -23,6 +26,12 @@ const supabase = await createClient(
       return redirect("/login")
     }
 
+
+    const {data: credits} = await getCredits();
+
+
+
+
   return (
     <section className='container mx-auto space-y-8'>
       <div>
@@ -33,7 +42,21 @@ const supabase = await createClient(
       </div>
 
       <div className='grid gap-10'>
-        <PlanSummary subscription = {subscription} user ={user} products={products || []} />
+        <PlanSummary credits={credits} subscription = {subscription} user ={user} products={products || []} />
+
+
+        {
+          subscription.status === "active" && <Pricing user={user}
+           products={products ?? []}
+            subscription ={subscription} 
+            showInterval={false} 
+            className="p-0 max-w-full"
+            activeProduct={subscription.prices?.products?.name.toLowerCase() || "pro"}
+            
+            />
+        }
+
+
       </div>
 
     </section>

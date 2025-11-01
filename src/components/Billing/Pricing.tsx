@@ -11,9 +11,10 @@ import Link from "next/link";
 import { Check } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 import { usePathname, useRouter } from "next/navigation";
-import { checkoutWithStripe } from "@/lib/stripe/server";
+import { checkoutWithStripe, createStripePortal } from "@/lib/stripe/server";
 import { getErrorRedirect } from "@/lib/helpers";
 import { getStripe } from "@/lib/stripe/client";
+import { toast } from "sonner";
 type Product = Tables<"products">;
 type Price = Tables<"prices">;
 type Subscription = Tables<"subscriptions">;
@@ -33,7 +34,10 @@ interface PricingProps {
   subscription: SubscriptionWithProduct | null;
   user: User | null;
   products: ProductWithPrices[] | null;
-  mostPopularProduct: string
+  mostPopularProduct?: string,
+  showInterval?: boolean,
+  className?: string,
+  activeProduct?: string,
 }
 
 const renderPricingButton = ({
@@ -45,12 +49,30 @@ const renderPricingButton = ({
    price:Price,
    mostPopularProduct : string,
    handelStripePortalRequest: () => Promise<void>,
-   handelStripeCheckout: () => Promise<void>,
+   handelStripeCheckout: (price: Price) => Promise<void>,
 
 
 }) => {
+  //case 1 : User has an active subscription
+  if(user && subscription && subscription.prices?.products?.name?.toLowerCase() === product?.name?.toLowerCase()){
+    return (
+      <Button className="mt-8 w-full font-semibold" onClick={handelStripePortalRequest}>
+      Manage Subscription
+    </Button>
+    )
+  }
+
+  //case 2 : user is logged in but has subscription to a different plan
+  if(user && subscription){
+     return (
+    <Button className="mt-8 w-full font-semibold" variant={ "secondary"} onClick={handelStripePortalRequest}>
+      Switch Plan
+    </Button>
+  )
+  }
 
 
+//case3 : user is logged in but has no subscription
  if(user && !subscription){
   return (
     <Button className="mt-8 w-full font-semibold" variant={ product?.name?.toLowerCase() === mostPopularProduct.toLowerCase() ? "default" : "secondary"} onClick={()=> handelStripeCheckout(price)}>
@@ -59,14 +81,16 @@ const renderPricingButton = ({
   )
  }
 
-  return null
+  return <Button className="mt-8 w-full font-semibold" variant={ product?.name?.toLowerCase() === mostPopularProduct.toLowerCase() ? "default" : "secondary"} onClick={()=> handelStripeCheckout(price)}>
+      Subscribe
+    </Button>
 
 
 }
 
 
 
-function Pricing({user , products, mostPopularProduct = "pro", subscription }: PricingProps) {
+function Pricing({user , products, mostPopularProduct = "", subscription, showInterval =true , className ,activeProduct = "" }: PricingProps) {
   const router = useRouter()
   const [billingInterval, setbillingInterval] = useState("month");
   // console.log(products);
@@ -99,7 +123,10 @@ function Pricing({user , products, mostPopularProduct = "pro", subscription }: P
 
 
   const handelStripePortalRequest =async () =>{
-    return "stripe portal function"
+
+    toast.info("Redirecting to Stripe portal...")
+    const redirectUrl = await createStripePortal(currentPath)
+    return router.push(redirectUrl)
 
   }  
 
@@ -107,8 +134,8 @@ function Pricing({user , products, mostPopularProduct = "pro", subscription }: P
 
   return (
     <>
-      <div className="max-w-7xl mx-auto py-16 px-8 flex flex-col ">
-        {/* Billing Period */}
+      <div className={cn('max-w-7xl mx-auto py-16 px-8 flex flex-col ' , className)}>
+        {showInterval &&
         <div className="flex justify-center items-center space-x-4 py-12">
           <Label htmlFor="pricing-switch" className="font-semibold text-base">
             Monthly
@@ -126,9 +153,11 @@ function Pricing({user , products, mostPopularProduct = "pro", subscription }: P
             Yearly
           </Label>
         </div>
+        }
+        {/* Billing Period */}
 
         {/* Products */}
-        <div className="grid grid-cols-3 place-items-center space-y-4  gap-8">
+        <div className="grid grid-cols-3 place-items-center space-y-0  gap-8">
           {products.map((product) => {
             const price = product?.prices?.find(
               (price) => price.interval === billingInterval
@@ -147,8 +176,8 @@ function Pricing({user , products, mostPopularProduct = "pro", subscription }: P
                 className={cn(
                   "border bg-background rounded-xl shadow-sm h-fit divide-border divide-y",
                   product.name?.toLowerCase() ===
-                    mostPopularProduct.toLowerCase()
-                    ? "border-primary bg-background drop-shadow-md scale-105"
+                    activeProduct.toLowerCase()
+                    ? "border-primary bg-background drop-shadow-md"
                     : "border-border"
                 )}
               >
@@ -156,6 +185,12 @@ function Pricing({user , products, mostPopularProduct = "pro", subscription }: P
                   <h2 className="text-2xl leading-6 font-semibold text-foreground flex items-center justify-between">
                     {product.name}
 
+                    {product.name?.toLowerCase() ===
+                    activeProduct.toLowerCase() ? (
+                      <Badge className="border-border font-semibold">
+                        Selected
+                      </Badge>
+                    ) : null}
                     {product.name?.toLowerCase() ===
                     mostPopularProduct.toLowerCase() ? (
                       <Badge className="border-border font-semibold">

@@ -235,24 +235,22 @@ const manageSubscriptionStatusChange = async (
   });
   // Upsert the latest status of the subscription object.
 
-  const safeToISOString = (value: number | null | undefined, fallback?: number) =>
-  value
-    ? toDateTime(value).toISOString()
-    : fallback
-    ? toDateTime(fallback).toISOString()
-    : toDateTime(Date.now() / 1000).toISOString(); // fallback to now
-
+ const safeToISOString = (value: number | null | undefined, fallback?: number | null) => {
+  if (value) return toDateTime(value).toISOString();
+  if (fallback) return toDateTime(fallback).toISOString();
+  return null; // <-- Return null if no value or fallback
+};
 
   const subscriptionData: TablesInsert<'subscriptions'> = {       //OK Subscription Table been upserted
-     id: subscription.id, 
+  id: subscription.id, 
   user_id: uuid,
   metadata: subscription.metadata,
   status: subscription.status,
   price_id: subscription.items.data[0].price.id,
   quantity: (subscription as any).quantity,
   cancel_at_period_end: subscription.cancel_at_period_end,
-  cancel_at: safeToISOString(subscription.cancel_at),
-  canceled_at: safeToISOString(subscription.canceled_at),
+  cancel_at: safeToISOString(subscription.cancel_at),          // stays null if not canceled
+  canceled_at: safeToISOString(subscription.canceled_at),      // stays null if not canceled
   current_period_start: safeToISOString(
     subscription.current_period_start,
     subscription.created
@@ -288,14 +286,15 @@ const manageSubscriptionStatusChange = async (
 
 const updateUserCredits = async (userId: string , metadata:Json)=>{
   const creditsData: TablesInsert<"credits"> = {
+    user_id : userId,
     image_generation_count : (metadata as {image_generation_count?:number}).image_generation_count ?? 0,
     model_training_count : (metadata as {model_training_count?:number}).model_training_count ?? 0,
-    max_image_generation_count : (metadata as {max_image_generation_count?:number}).max_image_generation_count ?? 0,
-    max_model_training_count : (metadata as {max_model_training_count?:number}).max_model_training_count ?? 0,
+    max_image_generation_count : (metadata as {image_generation_count?:number}).image_generation_count ?? 0,
+    max_model_training_count : (metadata as {model_training_count?:number}).model_training_count ?? 0,
   }
 
 
-  const { error : upsertError} = await supabaseAdmin.from("credits").update(creditsData).eq("user_id" , userId);
+  const { error : upsertError} = await supabaseAdmin.from("credits").upsert(creditsData).eq("user_id" , userId);
   if(upsertError){
     throw new Error(`Credits update failed: ${upsertError.message}`);
   }

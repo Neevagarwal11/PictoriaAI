@@ -27,10 +27,12 @@ interface PlanSummaryProps {
     subscription : SubscriptionWithProduct |null,
     user : User | null,
     products : ProductWithPrices[] | null 
+    credits: Tables<'credits'> | null,
 }
 
 
 function planSummary({
+    credits,
     subscription,
     user,
     products
@@ -40,7 +42,7 @@ function planSummary({
     console.log(subscription)
 
 
-    if(!subscription || subscription.status !== "active"){
+    if(!credits ||!subscription || subscription.status !== "active"){
         return <Card className='max-w-5xl'>
             <CardContent className='px-5 py-4'>
                 <h3 className='pb-4 text-base font-semibold flex flex-wrap items-center gap-x-2'>
@@ -100,7 +102,7 @@ function planSummary({
         </Card>
     }
 
-const {products : subscriptionProduct , unit_amount , currency} = subscription?.prices
+const {products : subscriptionProduct , unit_amount , currency} = subscription?.prices ?? {}
 const priceString = new Intl.NumberFormat("en-US", {
               style: "currency",
               currency: currency!,
@@ -108,9 +110,14 @@ const priceString = new Intl.NumberFormat("en-US", {
             }).format((unit_amount || 0) / 100);
 
 
+            const imageGenCounts = credits?.image_generation_count ?? 0; 
+            const modelTrainCount = credits?.model_training_count ?? 0; 
+            const maxImageGenCounts = credits?.max_image_generation_count ?? 0; 
+            const maxModelTrainCount = credits?.max_model_training_count ?? 0; 
+
   return (
     <Card className='max-w-5xl'>
-            <CardContent className='px-5 py-4'>
+            <CardContent className='px-5 py-4 pb-8'>
                 <h3 className='pb-4 text-base font-semibold flex flex-wrap items-center gap-x-2'>
                     <span>Plan Summary</span>
                     <Badge variant={"secondary"} className='bg-primary/10'>{subscriptionProduct?.name} Plan</Badge>
@@ -119,31 +126,31 @@ const priceString = new Intl.NumberFormat("en-US", {
 
                 <div className='grid grid-cols-8 gap-4'>
                     <div className='col-span-5 flex flex-col pr-12'>
-                        <div className='flex-1 text-sm font-normal flex w-full justify-between pb-1 '>
-                            <span className='font-normal text-muted-foreground ml-1 lowercase'>
-                                Image Generation Credits Left
+                        <div className='flex-1 text-sm font-normal flex w-full justify-between items-center '>
+                            <span className='font-semibold text-base'>
+                                {imageGenCounts}/{maxImageGenCounts}
                             </span>
-                            <span className='font-medium'>
-                                0 Remaining
+                            <span className='font-normal text-muted-foreground ml-1 '>
+                                Image Generation Credits
                             </span>
                         </div>
                         <div className='mb-1 flex items-end '>
-                            <Progress value={0} className='w-full h-2'/>
+                            <Progress value={imageGenCounts / maxImageGenCounts * 100} className='w-full h-2'/>
                         </div>
                     </div>
 
 
                       <div className='col-span-5 flex flex-col pr-12'>
-                        <div className='flex-1 text-sm font-normal flex w-full justify-between pb-1 '>
-                            <span className='font-normal text-muted-foreground ml-1 lowercase'>
-                                Model Training Credits Left
+                        <div className='flex-1 text-sm font-normal flex w-full justify-between items-center '>
+                             <span className='font-semibold text-base'>
+                                {modelTrainCount}/{maxModelTrainCount}
                             </span>
-                            <span className='font-medium'>
-                                0 Remaining
+                            <span className='font-normal text-muted-foreground ml-1 lowercase'>
+                                Model Training Credits
                             </span>
                         </div>
                         <div className='mb-1 flex items-end '>
-                            <Progress value={0} className='w-full h-2'/>
+                            <Progress value={modelTrainCount / maxModelTrainCount * 100} className='w-full h-2'/>
                         </div>
                     </div>
 
@@ -169,7 +176,7 @@ const priceString = new Intl.NumberFormat("en-US", {
                             </div>
 
                             <div className='flex-1 pt-1 text-sm font-medium'>
-                                0 credits
+                                {maxImageGenCounts}
                             </div>
 
                         </div>
