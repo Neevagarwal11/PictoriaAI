@@ -71,6 +71,8 @@ const upsertPriceRecord = async (
   }
 };
 
+
+
 const deleteProductRecord = async (product: Stripe.Product) => {
   const { error: deletionError } = await supabaseAdmin
     .from('products')
@@ -182,6 +184,9 @@ const createOrRetrieveCustomer = async ({
     return upsertedStripeCustomer;
   }
 };
+
+
+
 
 /**
  * Copies the billing details from the payment method to the customer object.
