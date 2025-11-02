@@ -109,6 +109,16 @@ export async function POST(req: Request) {
         .eq("model_name", modelName);
     }
 
+    //Getting Old credits
+      const {data:oldCredits , error} = await supabaseAdmin.from('credits').select('model_training_count').eq('user_id' , userId).single();
+      if(error){
+      throw new Error("Error getting user credits!")
+      }
+
+      //Updating credits
+    await supabaseAdmin.from('credits').update({model_training_count : oldCredits?.model_training_count+1}).eq('user_id', userId).single()
+
+
     //delete the training data from supabase storage
     await supabaseAdmin.storage.from("training-data").remove([`${fileName}`]);
 

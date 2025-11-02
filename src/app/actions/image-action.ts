@@ -8,6 +8,7 @@ import { Database } from "@datatypes.types";
 import { imageMeta } from "image-meta";
 import { randomUUID } from "crypto";
 import { error } from "console";
+import { getCredits } from "./credit-actions";
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
@@ -34,6 +35,14 @@ export async function generateImageAction(
       }
     }
 
+    const {data: credits} = await getCredits();
+    if(!credits?.image_generation_count || credits.image_generation_count <=0){
+      return{
+        error:"No credits available for image generation.",
+        success: false,
+        data:null
+      }
+    }
 
 
   const modelInput = input.model.startsWith("neevagarwal11/")?
