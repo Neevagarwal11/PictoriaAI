@@ -1,7 +1,25 @@
 import AccountForm from "@/components/account/AccountForm";
+import { getUser } from "@/lib/supabase/queries";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 import React from "react";
+import SecuritySetting from "@/components/account/SecuritySetting";
 
-function AccountSettingsPage() {
+
+async function AccountSettingsPage() {
+
+  const supabase = await createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+  const user = await getUser(supabase);
+
+  if(!user){
+    return redirect('/login');
+  }
+
+
+
   return (
     <section className="container mx-auto space-y-8">
       <div>
@@ -14,9 +32,12 @@ function AccountSettingsPage() {
       <div className="grid gap-8">
 
       {/* Account Form */}
-    <AccountForm />      
+    <AccountForm user = {user}/>      
 
       {/* Security Setting Component */}
+      <SecuritySetting user={user} />
+
+
       </div>
 
 

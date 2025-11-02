@@ -68,3 +68,71 @@ export async function logout(): Promise<void>{
     await supabase.auth.signOut();
     redirect('/login');
 }
+
+
+export async function updateProfile(values : {fullName:string}): Promise<Authresponse>{
+    const supabase = createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_ANON_KEY!
+    );
+
+    const full_name = values.fullName;
+
+        const {data : profileData, error } = await (await supabase).auth.updateUser(
+            {
+                data:{full_name}
+            }
+        )
+     
+
+        return{
+            error: error?.message || "Error Updating Profile",
+            success: !error,
+            data: profileData || null
+        }
+
+}
+
+
+
+export async function resetPassword(values : {email:string}): Promise<Authresponse>{
+    const supabase = createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_ANON_KEY!
+    );
+
+
+        const {data : resetPasswordData, error } = await (await supabase).auth.resetPasswordForEmail(
+            values.email ,
+        )
+     
+        
+        console.log(error);
+        return{
+            error: error?.message || "Error Sending Reset Email",
+            success: !error,
+            data: resetPasswordData || null
+        }
+
+}
+
+
+
+export async function changePassword(newPassword: string): Promise<Authresponse>{
+    const supabase = createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_ANON_KEY!
+    );
+
+        const {data , error } = await (await supabase).auth.updateUser({
+            password: newPassword
+        })
+
+        return{
+            error: "Error Changing Password",
+            success: !error,
+            data: data || null
+        }
+
+
+}
