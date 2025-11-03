@@ -1,9 +1,9 @@
-'use client'
-import React from 'react'
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { Button } from "@/components/ui/button"
+"use client";
+import React, { useId } from "react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -12,56 +12,77 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { cn } from '@/lib/utils'
-
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { resetPassword } from "@/app/actions/auth-actions";
 
 const formSchema = z.object({
-    email: z.string().email({
-        message: "Please enter a valid email address",
-    }),
-  })
+  email: z.string().email({
+    message: "Please enter a valid email address",
+  }),
+});
 
-function ResetForm({className}: {className?: string}) {
+function ResetForm({ className }: { className?: string }) {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
 
-      const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-          email: "",
-        },
-      })
 
-      function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        // console.log(values)
+  const toastId = useId();
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    toast.loading("Sending Password Reset Email...", { id: toastId });
+
+    try {
+      const { success, error } = await resetPassword({
+        email: values.email || "",
+      });
+      if (!success) {
+        toast.error(error + " Please try again later.", { id: toastId });
+      } else {
+        toast.success(
+          "Password Reset Email Sent! Please check your email for instructions",
+          { id: toastId }
+        );
       }
-
+    } catch (error) {
+      toast.error("Error sending password reset email", { id: toastId });
+    }
+  }
 
   return (
     <div className={cn("grid gap-6", className)}>
-         <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input type='email' placeholder="email@example.com" {...field} />
-              </FormControl>
-             
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" className='w-full'>Reset Password</Button>
-      </form>
-    </Form>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="email@example.com"
+                    {...field}
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" className="w-full">
+            Reset Password
+          </Button>
+        </form>
+      </Form>
     </div>
-  )
+  );
 }
 
-export default ResetForm
+export default ResetForm;

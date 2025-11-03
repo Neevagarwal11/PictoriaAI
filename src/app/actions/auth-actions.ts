@@ -127,9 +127,9 @@ export async function changePassword(newPassword: string): Promise<Authresponse>
         const {data , error } = await (await supabase).auth.updateUser({
             password: newPassword
         })
-
+        console.log(error)
         return{
-            error: "Error Changing Password",
+            error: error?.message || "Error Changing Password",
             success: !error,
             data: data || null
         }

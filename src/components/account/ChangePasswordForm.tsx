@@ -52,7 +52,7 @@ function ChangePasswordForm({ className }: { className?: string }) {
     setLoading(true);
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-
+    console.log(values.password + " New Password");
     try{
         const { success, error } = await changePassword(values.password);
         if (!success) {
@@ -61,10 +61,10 @@ function ChangePasswordForm({ className }: { className?: string }) {
         } else {
         toast.success("Password Changed Successfully!", { id: toastId });
         setLoading(false);
-        redirect("/login");
+        router.push('/login');
         }
-    } catch (error) {
-      toast.error("An unexpected error occurred.", { id: toastId });
+    } catch (error :any) {
+      toast.error(error?.message + "catch Block" || "An unexpected error occurred.", { id: toastId });
     }
     setLoading(false);
   }

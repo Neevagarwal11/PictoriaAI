@@ -1,13 +1,9 @@
-"use client";
 import React from "react";
 import AuthImg from "@/public/Abstract Curves and Colors.jpeg";
 import Image from "next/image";
 import Logo from "@/components/Logo";
 import ChangePasswordForm from "@/components/account/ChangePasswordForm";
 
-import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { createClient } from "@supabase/supabase-js";
 
 async function ResetPasswordPage() {
 
