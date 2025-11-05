@@ -5,6 +5,7 @@ import { getProducts, getUser } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import Navigation from "@/components/landingPage/Navigation";
 import HeroSection from "@/components/landingPage/HeroSection";
+import Features from "@/components/landingPage/Features";
 
 export default async function Home() {
 
@@ -27,6 +28,7 @@ export default async function Home() {
 
     <Navigation/>
     <HeroSection/>
+    <Features/>
     <Pricing products={products ?? []} />
     </main>
      
