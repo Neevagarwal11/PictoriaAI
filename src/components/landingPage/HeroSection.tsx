@@ -118,7 +118,7 @@ const MarqueeColumn=({
     >
         {
             Images.sort(()=> Math.random() -0.5).map((image,index) =>{
-                return <Image key={index} src ={image.src} alt={image.alt} priority className='w-full h-full object-cover rounded opacity-[0.25] hover:opacity-100 transition-opacity duration-300 ease-in-out' />
+                return <Image key={index} src ={image.src} alt={image.alt} priority className='w-full h-full object-cover rounded opacity-[0.25] hover:opacity-100 transition-opacity duration-700  ease-in-out' />
             })
         }
       </Marquee>
@@ -189,12 +189,12 @@ function HeroSection() {
 
 
         <div className="absolute top-0 w-full grid xl:grid-cols-6 grid-cols-3 md:grid-cols-4 lg:grid-cols-5 z-10">
-             <MarqueeColumn reverse={false} duration="120s" />
-             <MarqueeColumn reverse={true} duration="120s" />
-             <MarqueeColumn reverse={false} duration="120s" />
-             <MarqueeColumn reverse={true} duration="120s" className="hidden md:flex" />
-             <MarqueeColumn reverse={false} duration="120s" className="hidden lg:flex" />
-             <MarqueeColumn reverse={true} duration="120s" className="hidden lg:flex" />
+             <MarqueeColumn reverse={false} duration="200s" />
+             <MarqueeColumn reverse={true} duration="200s" />
+             <MarqueeColumn reverse={false} duration="200s" />
+             <MarqueeColumn reverse={true} duration="200s" className="hidden md:flex" />
+             <MarqueeColumn reverse={false} duration="200s" className="hidden lg:flex" />
+             <MarqueeColumn reverse={true} duration="200s" className="hidden lg:flex" />
         </div>
 
     </section>
