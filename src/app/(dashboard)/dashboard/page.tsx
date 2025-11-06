@@ -41,11 +41,11 @@ export  default async function Page() {
          />
 
 
-         <div className="grid gap-6 grid-cols-4">
+         <div className="grid gap-6 grid-cols-1 md:grid-cols-4">
           {/* Recent Images */}
           <RecentImages images={images?.slice(0,6) ?? [] } />
 
-          <div className="h-full flex flex-col space-y-6">
+          <div className="h-full flex sm:flex-row flex-col xl:space-y-6 xl:gap-0 gap-0 sm:gap-6 xl:col-span-1 col-span-full xl:flex-col space-y-6">
 
           {/* Quick Actions */}
         <QuickActions/>

@@ -88,8 +88,8 @@ const ReviewCard = ({
 function Testimonials() {
   return (
     <section
-      id="features"
-      className="w-full  py-32 flex flex-col items-center justify-center overflow-hidden"
+      id="testimonials"
+      className="w-full  py-32  px-6 xs:px-8 sm:px-0 sm:mx-8 lg:mx-auto flex flex-col items-center justify-center overflow-hidden"
     >
       {/* Animated Text */}
       <div className="group relative mx-auto bg-background mb-4 backdrop-blur-0 flex items-center justify-center rounded-full px-4 py-1 shadow-[inset_0_-8px_10px_#8fdfff1f] transition-shadow duration-500 ease-out hover:shadow-[inset_0_-5px_10px_#8fdfff3f]">

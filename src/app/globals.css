@@ -16,6 +16,12 @@
   @apply text-sm xs:text-base text-muted-foreground lg:max-w-3xl
 }
 
+@media(min-width:1536px){
+  .container{
+    max-width: 1400px;
+  }
+}
+
 @theme inline {
   --animate-marquee: marquee var(--duration) infinite linear;
   --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;

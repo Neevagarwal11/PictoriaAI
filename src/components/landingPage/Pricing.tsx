@@ -31,7 +31,7 @@ function Pricing({products , mostPopularProduct = "pro"} : PricingProps) {
   return (
     <>
     <div className="w-full bg-muted py-6 px-8 flex flex-col items-center justify-center">
-      <div className="text-center flex flex-col items-center justify-center">
+      <div className="text-center  px-6 xs:px-8 sm:px-0 sm:mx-8 lg:mx-auto flex flex-col items-center justify-center">
         <div className="w-full container mx-auto py-16 flex flex-col items-center justify-center space-y-8">
           {/* Magic Ui compo */}
           <div className="group relative mx-auto flex items-center justify-center rounded-full px-4 py-1.5 shadow-[inset_0_-8px_10px_#8fdfff1f] transition-shadow duration-500 ease-out hover:shadow-[inset_0_-5px_10px_#8fdfff3f] ">
@@ -82,7 +82,7 @@ function Pricing({products , mostPopularProduct = "pro"} : PricingProps) {
         </Label>
       </div>
 
-      <div className="grid grid-cols-3 place-items-center mx-auto gap-8">
+      <div className="grid lg:grid-cols-2 grid-cols-1 xl:grid-cols-3  place-items-center mx-auto gap-y-8 xl:max-w-null lg:max-w-4xl sm:gap-8">
         {
             products.map(product => {
 

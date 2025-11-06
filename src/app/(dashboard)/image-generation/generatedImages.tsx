@@ -23,7 +23,7 @@ function generatedImages() {
 
   if (images.length === 0) {
     return (
-      <Card className="w-full max-w-2xl bg-muted">
+      <Card className="sm:max-w-[100%] lg:w-4/6 sm:w-1/2 lg:max-w-4xl bg-muted">
         <CardContent className="flex aspect-square items-center justify-center p-6">
           <span className="text-2xl">No Images Generated</span>
         </CardContent>
@@ -32,7 +32,7 @@ function generatedImages() {
   }
 
   return (
-    <Carousel className="w-full max-w-2xl">
+    <Carousel className="sm:w-1/2 lg:w-full lg:max-w-4xl">
       <CarouselContent>
         {images.map((image, index) => (
           <CarouselItem key={image.url + '-' + index}>

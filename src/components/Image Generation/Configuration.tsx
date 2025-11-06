@@ -139,7 +139,7 @@ function Configuration({userModels , model_id} : configurationsProps) {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8  w-2/5 px-10"
+          className="space-y-8 sm:w-1/2 lg:w-4/5 lg:px-5 px-4"
         >
           <fieldset className=" grid gap-6 border-2 border-gray-200 p-4 rounded-lg">
             <legend className="text-sm -ml-1 px-1 font-medium">Settings</legend>

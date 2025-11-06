@@ -13,7 +13,7 @@ interface StatsCardProps{
 
 function StatsCard({ imageCount, modelCount, credits }: StatsCardProps) {
   return (
-    <div className='grid grid-cols-4 gap-6'>
+    <div className='grid lg:grid-cols-4 sm:grid-cols-1 md:grid-cols-2  gap-6'>
 
         <Card>
 
