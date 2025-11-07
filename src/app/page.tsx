@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Pricing from "@/components/landingPage/Pricing";
 import { createClient } from "@/lib/supabase/server";
 import { getProducts, getUser } from "@/lib/supabase/queries";

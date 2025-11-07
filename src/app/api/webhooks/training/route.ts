@@ -63,7 +63,7 @@ export async function POST(req: Request) {
 
     if (body.status === "succeeded") {
       //send a successful status email
-      const { data, error } = await resend.emails.send({
+      await resend.emails.send({
         from: "Pictoria Ai <onboarding@resend.dev>",
         to: [userEmail],
         subject: "Model Training Completed",
@@ -88,7 +88,7 @@ export async function POST(req: Request) {
 
     } else {
       // handel the failed and the cancelled status
-      const { data, error } = await resend.emails.send({
+       await resend.emails.send({
         from: "Pictoria Ai <onboarding@resend.dev>",
         to: [userEmail],
         subject: `Model Training ${body.status}`,

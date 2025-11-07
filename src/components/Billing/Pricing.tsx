@@ -1,14 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
-import { AnimatedGradientText } from "../ui/animated-gradient-text";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 import { Tables } from "@datatypes.types";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import Link from "next/link";
-import { Check } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 import { usePathname, useRouter } from "next/navigation";
 import { checkoutWithStripe, createStripePortal } from "@/lib/stripe/server";

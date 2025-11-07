@@ -3,14 +3,12 @@ import React from 'react'
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet"
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Download, Trash2 } from 'lucide-react'
+import { Download } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import DeleteImage from '@/components/gallery/deleteImage'

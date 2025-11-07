@@ -16,7 +16,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { redirect } from "next/navigation";
 import { changePassword } from "@/app/actions/auth-actions";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation"; // Import useRouter
@@ -54,7 +53,7 @@ function ChangePasswordForm({ className }: { className?: string }) {
     // ✅ This will be type-safe and validated.
     console.log(values.password + " New Password");
     try{
-        const { success, error } = await changePassword(values.password);
+        const { success} = await changePassword(values.password);
         if (!success) {
         toast.error('error Sending Reset Password Email', { id: toastId });
         setLoading(false);

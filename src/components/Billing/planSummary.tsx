@@ -3,10 +3,9 @@ import React from 'react'
 import { Card, CardContent, CardFooter } from '../ui/card'
 import { Badge } from '../ui/badge'
 import { Progress } from '../ui/progress'
-import { Button } from '../ui/button'
 import { User } from '@supabase/supabase-js'
 import PricingSheet from './PricingSheet'
-import { format, sub } from 'date-fns'
+import { format} from 'date-fns'
 
 type Product = Tables<"products">
 type Price = Tables<"prices">
@@ -39,7 +38,6 @@ function planSummary({
 } : PlanSummaryProps) {
 
 
-    console.log(subscription)
 
 
     if(!credits ||!subscription || subscription.status !== "active"){

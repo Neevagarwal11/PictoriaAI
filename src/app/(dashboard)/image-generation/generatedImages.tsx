@@ -14,10 +14,9 @@ import useGeneratedStore from "@/store/useGeneratedStore";
 
 
 
-function generatedImages() {
+function GeneratedImages() {
 
   const images = useGeneratedStore((state) => state.images);
-  const loading = useGeneratedStore((state) => state.loading)
   console.log("Generated Images:", images);
 
   if (images.length === 0) {
@@ -52,4 +51,4 @@ function generatedImages() {
   );
 }
 
-export default generatedImages;
+export default GeneratedImages;

@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -31,7 +30,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
-import { generateImageAction } from "@/app/actions/image-action";
 import useGeneratedStore from "@/store/useGeneratedStore";
 import { Tables } from "@datatypes.types";
 
@@ -129,7 +127,6 @@ function Configuration({userModels , model_id} : configurationsProps) {
       
       : values.prompt,
     }
-
     await generateImage(values);
     // console.log(error , success, data ,  "onSubmit function in configurations.tsx");OKK
   }

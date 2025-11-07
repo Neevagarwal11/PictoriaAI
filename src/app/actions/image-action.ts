@@ -1,13 +1,11 @@
 "use server";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { ImageGenerationFormSchema } from "@/components/Image Generation/Configuration";
 import Replicate from "replicate";
 import { createClient } from "@/lib/supabase/server";
 import { Database } from "@datatypes.types";
 import { imageMeta } from "image-meta";
 import { randomUUID } from "crypto";
-import { error } from "console";
 import { getCredits } from "./credit-actions";
 
 const replicate = new Replicate({
@@ -15,10 +13,10 @@ const replicate = new Replicate({
   useFileOutput:false,
 });
 
-interface ImageResponse {
+interface ImageResponse<T = unknown> {
   error: string | null;
   success: boolean;
-  data: any | null;
+  data: T | null;
 }
 
 // Ok Tested

@@ -4,40 +4,20 @@ import { ChevronRight, type LucideIcon } from "lucide-react"
 import Link from "next/link"
 
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  ChevronsUpDown,
-  Command,
   CreditCard,
-  Frame,
   FrameIcon,
-  GalleryVerticalEnd,
   Image,
   Images,
   Layers,
-  Map,
-  PieChart,
   Settings2,
-  SparkleIcon,
-  Sparkles,
   SquareTerminal,
 } from "lucide-react"
 
