@@ -113,7 +113,7 @@ const MarqueeColumn=({
 }) => {
     return <Marquee pauseOnHover reverse={reverse} vertical className={cn("w-full relative h-full flex flex-col justify-center items-center" , className)}
     style={{
-        "--duration as any" :duration
+        "--duration" :duration
     }as React.CSSProperties}
     >
         {
@@ -189,12 +189,12 @@ function HeroSection() {
 
 
         <div className="absolute top-0 w-full grid xl:grid-cols-6 grid-cols-3 md:grid-cols-4 lg:grid-cols-5 z-10">
-             <MarqueeColumn reverse={false} duration="200s" />
-             <MarqueeColumn reverse={true} duration="200s" />
-             <MarqueeColumn reverse={false} duration="200s" />
-             <MarqueeColumn reverse={true} duration="200s" className="hidden md:flex" />
-             <MarqueeColumn reverse={false} duration="200s" className="hidden lg:flex" />
-             <MarqueeColumn reverse={true} duration="200s" className="hidden lg:flex" />
+             <MarqueeColumn reverse={false} duration="50s" />
+             <MarqueeColumn reverse={true} duration="50s" />
+             <MarqueeColumn reverse={false} duration="50s" />
+             <MarqueeColumn reverse={true} duration="50s" className="hidden md:flex" />
+             <MarqueeColumn reverse={false} duration="50s" className="hidden lg:flex" />
+             <MarqueeColumn reverse={true} duration="50s" className="hidden lg:flex" />
         </div>
 
     </section>

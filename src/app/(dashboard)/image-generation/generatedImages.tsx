@@ -17,13 +17,12 @@ import useGeneratedStore from "@/store/useGeneratedStore";
 function generatedImages() {
 
   const images = useGeneratedStore((state) => state.images);
-  const loading = useGeneratedStore((state) => state.loading);
-
+  const loading = useGeneratedStore((state) => state.loading)
   console.log("Generated Images:", images);
 
   if (images.length === 0) {
     return (
-      <Card className="sm:max-w-[100%] lg:w-4/6 sm:w-1/2 lg:max-w-4xl bg-muted">
+      <Card className="sm:max-w-[100%] lg:w-3/4 md:w-full sm:w-1/2 lg:max-w-4xl bg-muted">
         <CardContent className="flex aspect-square items-center justify-center p-6">
           <span className="text-2xl">No Images Generated</span>
         </CardContent>
@@ -32,7 +31,7 @@ function generatedImages() {
   }
 
   return (
-    <Carousel className="sm:w-1/2 lg:w-full lg:max-w-4xl">
+    <Carousel className="sm:w-1/2 lg:w-3/4 lg:max-w-4xl md:w-full">
       <CarouselContent>
         {images.map((image, index) => (
           <CarouselItem key={image.url + '-' + index}>

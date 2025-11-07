@@ -30,7 +30,7 @@ const GalleryComponent = ({images = []}: GalleryProps) => {
 
   return (
     <div className='container mx-auto py-8 overflow-auto'>
-        <div className='columns-4' gap-4 space-y-4>
+        <div className='xl:columns-4 sm:columns-2 lg:columns-3 columns-1 gap-4 space-y-4'>
             {
                  images.map((image , index) => {
                 return    <div key={index}>

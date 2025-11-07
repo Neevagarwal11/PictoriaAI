@@ -124,8 +124,9 @@ const priceString = new Intl.NumberFormat("en-US", {
                 </h3>
 
 
-                <div className='grid grid-cols-8 gap-4'>
-                    <div className='col-span-5 flex flex-col pr-12'>
+                <div className='grid xl:grid-cols-8 grid-cols-3 gap-4'>
+
+                    <div className='xl:col-span-5 col-span-full flex flex-col xl:pr-12'>
                         <div className='flex-1 text-sm font-normal flex w-full justify-between items-center '>
                             <span className='font-semibold text-base'>
                                 {imageGenCounts}/{maxImageGenCounts}
@@ -140,7 +141,7 @@ const priceString = new Intl.NumberFormat("en-US", {
                     </div>
 
 
-                      <div className='col-span-5 flex flex-col pr-12'>
+                      <div className='xl:col-span-5 col-span-full  flex flex-col xl:pr-12'>
                         <div className='flex-1 text-sm font-normal flex w-full justify-between items-center '>
                              <span className='font-semibold text-base'>
                                 {modelTrainCount}/{maxModelTrainCount}
@@ -155,7 +156,7 @@ const priceString = new Intl.NumberFormat("en-US", {
                     </div>
 
 
-                    <div className='col-span-3 flex flex-row justify-between flex-wrap pr-2'>
+                    <div className='col-span-full xl:col-span-3 flex flex-row justify-between flex-wrap xl:pr-2'>
                         
                         <div className='flex flex-col pb-0'>
 

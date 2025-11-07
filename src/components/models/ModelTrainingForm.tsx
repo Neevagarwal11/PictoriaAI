@@ -123,7 +123,7 @@ function ModelTrainingForm() {
 
   return (
     <Form {...form}>
-      <fieldset className="grid max-w-5xl bg-background p-8 rounded-lg gap-6 border">
+      <fieldset className="grid max-w-5xl bg-background p-4 sm:p-8 rounded-lg gap-6 border">
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {/* model name */}
           <FormField

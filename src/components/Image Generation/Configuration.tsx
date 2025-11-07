@@ -139,9 +139,9 @@ function Configuration({userModels , model_id} : configurationsProps) {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 sm:w-1/2 lg:w-4/5 lg:px-5 px-4"
+          className="space-y-10  lg:w-2/3 md:w-full "
         >
-          <fieldset className=" grid gap-6 border-2 border-gray-200 p-4 rounded-lg">
+          <fieldset className=" grid md:w-full p-4 xs:w-full gap-6 border-2 border-gray-200 rounded-lg">
             <legend className="text-sm -ml-1 px-1 font-medium">Settings</legend>
             {/* // Model Selection */}
             <FormField
@@ -190,7 +190,7 @@ function Configuration({userModels , model_id} : configurationsProps) {
 
 
             {/* // Aspect Ratio */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="aspect_ratio"

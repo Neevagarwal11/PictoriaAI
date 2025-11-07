@@ -50,7 +50,7 @@ const supabase = await createClient(
            products={products ?? []}
             subscription ={subscription} 
             showInterval={false} 
-            className="p-0 max-w-full"
+            className="p-0 max-w-full "
             activeProduct={subscription.prices?.products?.name.toLowerCase() || "pro"}
             
             />

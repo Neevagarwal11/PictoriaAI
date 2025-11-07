@@ -134,7 +134,7 @@ function Pricing({user , products, mostPopularProduct = "", subscription, showIn
 
   return (
     <>
-      <div className={cn('max-w-7xl mx-auto py-16 px-8 flex flex-col ' , className)}>
+      <div className={cn('max-w-7xl mx-auto py-16 px-4 sm:px-6 flex flex-col ' , className)}>
         {showInterval &&
         <div className="flex justify-center items-center space-x-4 py-12">
           <Label htmlFor="pricing-switch" className="font-semibold text-base">
@@ -157,7 +157,7 @@ function Pricing({user , products, mostPopularProduct = "", subscription, showIn
         {/* Billing Period */}
 
         {/* Products */}
-        <div className="grid grid-cols-3 place-items-center space-y-0  gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 place-items-center space-y-0  gap-8">
           {products.map((product) => {
             const price = product?.prices?.find(
               (price) => price.interval === billingInterval
