@@ -16,16 +16,16 @@ async function AuthenticationPage({searchParams} : {searchParams : Promise<searc
 
 
   return (
-    <main className="h-screen grid grid-cols-2 absolute  ">
-      <div className="relative w-full  flex flex-col bg-muted text-primary-foreground">
+    <main className="h-screen grid grid-cols-1  lg:grid lg:grid-cols-2  absolute" >
 
+      <div className="relative w-full  flex flex-col order-2 lg:order-1 bg-muted text-primary-foreground">
         <div className="w-full h-[30%] bg-gradient-to-t from-transparent to-black/50 absolute top-0 left-0 z-20"/>
         <div className="w-full h-[40%] bg-gradient-to-b from-transparent to-black/50 absolute bottom-0 left-0 z-20"/>
 
         <Image
           src={AuthImg}
           alt="login img"
-          className="w-full h-screen object-cover"
+          className="w-full h-full object-cover"
         />
 
         <div className="absolute z-20 p-10 flex items-center">
