@@ -18,7 +18,7 @@ async function AuthenticationPage({searchParams} : {searchParams : Promise<searc
   return (
     <main className="h-screen grid grid-cols-1  lg:grid lg:grid-cols-2  absolute" >
 
-      <div className="relative w-full  flex flex-col order-2 lg:order-1 bg-muted text-primary-foreground">
+      <div className="relative w-full  flex flex-col order-2 lg:order-1 md:order-1 bg-muted text-primary-foreground">
         <div className="w-full h-[30%] bg-gradient-to-t from-transparent to-black/50 absolute top-0 left-0 z-20"/>
         <div className="w-full h-[40%] bg-gradient-to-b from-transparent to-black/50 absolute bottom-0 left-0 z-20"/>
 
@@ -45,7 +45,7 @@ async function AuthenticationPage({searchParams} : {searchParams : Promise<searc
 
       </div>
 
-      <div className="relative flex flex-col w-full items-center justify-center p-8 h-full">
+      <div className="relative flex flex-col w-full items-center order-1 lg:order-2 justify-center p-8 h-full">
         <div className="w-[350px] max-w-xl mx-auto">
         <AuthForm state={state?? "login"}/>
 

@@ -6,6 +6,7 @@ export default {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -111,8 +112,8 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        marquee: "marquee var(--duration, 30s) linear infinite",
-        "marquee-vertical": "marquee-vertical var(--duration, 30s) linear infinite",
+        marquee: "marquee var(--duration, 80s) linear infinite",
+        "marquee-vertical": "marquee-vertical var(--duration, 120s) linear infinite",
         "animate-gradient": "animate-gradient 8s linear infinite",
       },
       screens: {
@@ -120,5 +121,10 @@ export default {
       },
     },
   },
+  safelist: [
+    "animate-marquee",
+    "animate-marquee-vertical",
+    "animate-gradient",
+  ],
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
